@@ -1,0 +1,376 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4C62DFB51947594300D7D67D /* ECoXiS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C62DFB41947594300D7D67D /* ECoXiS.h */; };
+		4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C62DFB61947594300D7D67D /* ECoXiS.m */; };
+		4C62DFBD1947594300D7D67D /* libECoXiS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C62DFB11947594300D7D67D /* libECoXiS.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4C62DFBE1947594300D7D67D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C62DFA91947594200D7D67D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C62DFB01947594200D7D67D;
+			remoteInfo = ECoXiS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4C62DFB11947594300D7D67D /* libECoXiS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libECoXiS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C62DFB41947594300D7D67D /* ECoXiS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECoXiS.h; sourceTree = "<group>"; };
+		4C62DFB61947594300D7D67D /* ECoXiS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECoXiS.m; sourceTree = "<group>"; };
+		4C62DFBC1947594300D7D67D /* ECoXiSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ECoXiSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C62DFC21947594300D7D67D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4C62DFAE1947594200D7D67D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C62DFB91947594300D7D67D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C62DFBD1947594300D7D67D /* libECoXiS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4C62DFA81947594200D7D67D = {
+			isa = PBXGroup;
+			children = (
+				4C62DFB31947594300D7D67D /* ECoXiS */,
+				4C62DFC01947594300D7D67D /* ECoXiSTests */,
+				4C62DFB21947594300D7D67D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4C62DFB21947594300D7D67D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4C62DFB11947594300D7D67D /* libECoXiS.dylib */,
+				4C62DFBC1947594300D7D67D /* ECoXiSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4C62DFB31947594300D7D67D /* ECoXiS */ = {
+			isa = PBXGroup;
+			children = (
+				4C62DFB41947594300D7D67D /* ECoXiS.h */,
+				4C62DFB61947594300D7D67D /* ECoXiS.m */,
+			);
+			path = ECoXiS;
+			sourceTree = "<group>";
+		};
+		4C62DFC01947594300D7D67D /* ECoXiSTests */ = {
+			isa = PBXGroup;
+			children = (
+				4C62DFC11947594300D7D67D /* Supporting Files */,
+			);
+			path = ECoXiSTests;
+			sourceTree = "<group>";
+		};
+		4C62DFC11947594300D7D67D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4C62DFC21947594300D7D67D /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		4C62DFAF1947594200D7D67D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C62DFB51947594300D7D67D /* ECoXiS.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4C62DFB01947594200D7D67D /* ECoXiS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C62DFC51947594300D7D67D /* Build configuration list for PBXNativeTarget "ECoXiS" */;
+			buildPhases = (
+				4C62DFAD1947594200D7D67D /* Sources */,
+				4C62DFAE1947594200D7D67D /* Frameworks */,
+				4C62DFAF1947594200D7D67D /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ECoXiS;
+			productName = ECoXiS;
+			productReference = 4C62DFB11947594300D7D67D /* libECoXiS.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		4C62DFBB1947594300D7D67D /* ECoXiSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C62DFC81947594300D7D67D /* Build configuration list for PBXNativeTarget "ECoXiSTests" */;
+			buildPhases = (
+				4C62DFB81947594300D7D67D /* Sources */,
+				4C62DFB91947594300D7D67D /* Frameworks */,
+				4C62DFBA1947594300D7D67D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C62DFBF1947594300D7D67D /* PBXTargetDependency */,
+			);
+			name = ECoXiSTests;
+			productName = ECoXiSTests;
+			productReference = 4C62DFBC1947594300D7D67D /* ECoXiSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4C62DFA91947594200D7D67D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = Michael;
+				TargetAttributes = {
+					4C62DFB01947594200D7D67D = {
+						CreatedOnToolsVersion = 6.0;
+					};
+					4C62DFBB1947594300D7D67D = {
+						CreatedOnToolsVersion = 6.0;
+						TestTargetID = 4C62DFB01947594200D7D67D;
+					};
+				};
+			};
+			buildConfigurationList = 4C62DFAC1947594200D7D67D /* Build configuration list for PBXProject "ECoXiS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4C62DFA81947594200D7D67D;
+			productRefGroup = 4C62DFB21947594300D7D67D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4C62DFB01947594200D7D67D /* ECoXiS */,
+				4C62DFBB1947594300D7D67D /* ECoXiSTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4C62DFBA1947594300D7D67D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C62DFAD1947594200D7D67D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C62DFB81947594300D7D67D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4C62DFBF1947594300D7D67D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C62DFB01947594200D7D67D /* ECoXiS */;
+			targetProxy = 4C62DFBE1947594300D7D67D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4C62DFC31947594300D7D67D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				METAL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4C62DFC41947594300D7D67D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				METAL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4C62DFC61947594300D7D67D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4C62DFC71947594300D7D67D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4C62DFC91947594300D7D67D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ECoXiSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				METAL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4C62DFCA1947594300D7D67D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ECoXiSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				METAL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C62DFAC1947594200D7D67D /* Build configuration list for PBXProject "ECoXiS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C62DFC31947594300D7D67D /* Debug */,
+				4C62DFC41947594300D7D67D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C62DFC51947594300D7D67D /* Build configuration list for PBXNativeTarget "ECoXiS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C62DFC61947594300D7D67D /* Debug */,
+				4C62DFC71947594300D7D67D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		4C62DFC81947594300D7D67D /* Build configuration list for PBXNativeTarget "ECoXiSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C62DFC91947594300D7D67D /* Debug */,
+				4C62DFCA1947594300D7D67D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4C62DFA91947594200D7D67D /* Project object */;
+}

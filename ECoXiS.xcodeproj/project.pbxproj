@@ -10,6 +10,9 @@
 		4C62DFB51947594300D7D67D /* ECoXiS.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C62DFB41947594300D7D67D /* ECoXiS.h */; };
 		4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C62DFB61947594300D7D67D /* ECoXiS.m */; };
 		4C62DFBD1947594300D7D67D /* libECoXiS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C62DFB11947594300D7D67D /* libECoXiS.dylib */; };
+		4C62DFCD1947596F00D7D67D /* ECoXiS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C62DFCC1947596F00D7D67D /* ECoXiS.swift */; };
+		4CB59469194B6A220030E203 /* ECoXiS-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */; };
+		4CD5ADBD194A0AA400533429 /* BasicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD5ADBC194A0AA400533429 /* BasicTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +31,10 @@
 		4C62DFB61947594300D7D67D /* ECoXiS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECoXiS.m; sourceTree = "<group>"; };
 		4C62DFBC1947594300D7D67D /* ECoXiSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ECoXiSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C62DFC21947594300D7D67D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C62DFCC1947596F00D7D67D /* ECoXiS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ECoXiS.swift; sourceTree = "<group>"; };
+		4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiS-Bridging-Header.h"; sourceTree = "<group>"; };
+		4CB5946A194B6A6C0030E203 /* ECoXiSTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiSTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		4CD5ADBC194A0AA400533429 /* BasicTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,8 +77,10 @@
 		4C62DFB31947594300D7D67D /* ECoXiS */ = {
 			isa = PBXGroup;
 			children = (
+				4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */,
 				4C62DFB41947594300D7D67D /* ECoXiS.h */,
 				4C62DFB61947594300D7D67D /* ECoXiS.m */,
+				4C62DFCC1947596F00D7D67D /* ECoXiS.swift */,
 			);
 			path = ECoXiS;
 			sourceTree = "<group>";
@@ -79,7 +88,9 @@
 		4C62DFC01947594300D7D67D /* ECoXiSTests */ = {
 			isa = PBXGroup;
 			children = (
+				4CB5946A194B6A6C0030E203 /* ECoXiSTests-Bridging-Header.h */,
 				4C62DFC11947594300D7D67D /* Supporting Files */,
+				4CD5ADBC194A0AA400533429 /* BasicTest.swift */,
 			);
 			path = ECoXiSTests;
 			sourceTree = "<group>";
@@ -99,6 +110,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CB59469194B6A220030E203 /* ECoXiS-Bridging-Header.h in Headers */,
 				4C62DFB51947594300D7D67D /* ECoXiS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,6 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C62DFCD1947596F00D7D67D /* ECoXiS.swift in Sources */,
 				4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -200,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CD5ADBD194A0AA400533429 /* BasicTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,26 +305,36 @@
 		4C62DFC61947594300D7D67D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "ECoXiS/ECoXiS-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		4C62DFC71947594300D7D67D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "ECoXiS/ECoXiS-Bridging-Header.h";
 			};
 			name = Release;
 		};
 		4C62DFC91947594300D7D67D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -324,12 +348,15 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				METAL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ECoXiSTests/ECoXiSTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		4C62DFCA1947594300D7D67D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -339,6 +366,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				METAL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ECoXiSTests/ECoXiSTests-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -361,6 +389,7 @@
 				4C62DFC71947594300D7D67D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4C62DFC81947594300D7D67D /* Build configuration list for PBXNativeTarget "ECoXiSTests" */ = {
 			isa = XCConfigurationList;
@@ -369,6 +398,7 @@
 				4C62DFCA1947594300D7D67D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

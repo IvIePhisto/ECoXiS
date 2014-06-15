@@ -16,8 +16,8 @@ class BasicTest: XCTestCase {
         var fooValue = "<foz'\">"
         var escapedFooValue = "&lt;foz'&quot;&gt;"
         var element = XMLElement("<test/>",
-            ["!foo": fooValue, "<bar/>": "boz"], XMLText(text),
-            XMLProcessingInstruction("foo"))
+            attributes: ["!foo": fooValue, "<bar/>": "boz"],
+            children: [XMLText(text), XMLProcessingInstruction("foo")])
         XCTAssert(element.name == "test")
         XCTAssert(element[0]! as XMLText == text)
         XCTAssert(text == element[0]! as XMLText)

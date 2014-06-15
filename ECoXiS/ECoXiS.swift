@@ -179,20 +179,18 @@ enum XMLNodeType {
 }
 
 
-class XMLNode {
-    let nodeType: XMLNodeType
+protocol XMLNode {
+    var nodeType: XMLNodeType { get }
 
-    init(_ nodeType: XMLNodeType) {
-        self.nodeType = nodeType
-    }
-
-    func toString() -> String {
-        return ""
-    }
+    func toString() -> String
 }
 
 
+protocol XMLMiscNode: XMLNode {}
+
+
 class XMLContentNode: XMLNode {
+    let nodeType: XMLNodeType
     let _getContent: () -> String
     let _setContent: String -> ()
     var content: String {
@@ -204,8 +202,16 @@ class XMLContentNode: XMLNode {
             getter: () -> String, setter: String -> ()) {
         _getContent = getter
         _setContent = setter
-        super.init(nodeType)
+        self.nodeType = nodeType
         self.content = content
+    }
+
+    class func createString(content: String) -> String {
+        return ""
+    }
+
+    func toString() -> String {
+        return ""
     }
 }
 
@@ -216,26 +222,36 @@ class XMLText: XMLContentNode {
         super.init(.Text, content, getter: { c }, setter: { c = $0 })
     }
 
-    override func toString() -> String {
+    override class func createString(content: String) -> String {
         return XMLUtilities.escape(content)
+    }
+
+    override func toString() -> String {
+        return XMLText.createString(content)
     }
 }
 
 
-class XMLComment: XMLContentNode {
+class XMLComment: XMLContentNode, XMLMiscNode {
     init(_ content: String) {
         var c = ""
         super.init(.Comment, content, getter: { c },
             setter: { c = XMLUtilities.enforceCommentContent($0) })
     }
 
-    override func toString() -> String {
+    override class func createString(content: String) -> String {
         return "<!--\(content)-->"
+    }
+
+    override func toString() -> String {
+        return XMLComment.createString(content)
     }
 }
 
 
-class XMLProcessingInstruction: XMLNode {
+class XMLProcessingInstruction: XMLMiscNode {
+    let nodeType = XMLNodeType.ProcessingInstruction
+
     let _getTarget: () -> String?
     let _setTarget: String? -> ()
     var target: String? {
@@ -259,25 +275,28 @@ class XMLProcessingInstruction: XMLNode {
         var v:String? = ""
         _getValue = { v }
         _setValue = { v = XMLUtilities.enforceProcessingInstructionValue($0) }
-        super.init(.ProcessingInstruction)
         self.target = target
         self.value = value
     }
 
-    override func toString() -> String {
+    class func createString(target: String, value: String?) -> String {
         var result = ""
+        result += "<?\(target)"
 
-        if let t = target {
-            result += "<?\(target)"
-
-            if let v = value {
-                result += " \(v)"
-            }
-
-            result += "?>"
+        if let v = value {
+            result += " \(v)"
         }
 
+        result += "?>"
         return result
+    }
+
+    func toString() -> String {
+        if let t = target {
+            return XMLProcessingInstruction.createString(t, value: value)
+        }
+
+        return ""
     }
 }
 
@@ -288,16 +307,6 @@ class XMLProcessingInstruction: XMLNode {
 
 @infix func ==(left: XMLText, right: String) -> Bool {
     return left.content == right
-}
-
-
-class XMLContainerNode: XMLNode {
-    var children: XMLNode[]
-
-    init(_ nodeType: XMLNodeType, children: XMLNode[]) {
-        self.children = children
-        super.init(nodeType)
-    }
 }
 
 
@@ -356,20 +365,27 @@ class XMLAttributes: Sequence {
         }
     }
 
-    func toString() -> String {
+    class func createString(var attributeGenerator:
+            DictionaryGenerator<String, String>) -> String {
         var result = ""
 
-        for (name, value) in self {
+        while let (name, value) = attributeGenerator.next() {
             var escapedValue = XMLUtilities.escape(value, .EscapeQuot)
             result += " \(name)=\"\(escapedValue)\""
         }
 
         return result
     }
+
+    func toString() -> String {
+        return XMLAttributes.createString(self._generate())
+    }
 }
 
 
-class XMLElement: XMLContainerNode {
+class XMLElement: XMLNode {
+    let nodeType = XMLNodeType.Element
+
     let getName: () -> String?
     let setName: String? -> ()
     var name: String? {
@@ -377,9 +393,10 @@ class XMLElement: XMLContainerNode {
         set { setName(newValue) }
     }
     let attributes: XMLAttributes
+    var children: XMLNode[]
 
-    init(_ name: String, _ attributes: Dictionary<String, String> = [:],
-            _ children: XMLNode...) {
+    init(_ name: String, attributes: Dictionary<String, String> = [:],
+            children: XMLNode[] = []) {
         var elementName:String? = nil
         getName = { elementName }
         setName = {
@@ -391,7 +408,7 @@ class XMLElement: XMLContainerNode {
             }
         }
         self.attributes = XMLAttributes(attributes: attributes)
-        super.init(.Element, children: children)
+        self.children = children
         self.name = name
     }
 
@@ -429,26 +446,67 @@ class XMLElement: XMLContainerNode {
         }
     }
 
-    override func toString() -> String {
+    class func createChildrenString(children: XMLNode[]) -> String {
+        var childrenString = ""
+
+        for child in children {
+            childrenString += child.toString()
+        }
+
+        return childrenString
+    }
+
+    class func createString(name: String, attributesString: String = "",
+            childrenString: String = "") -> String {
+        var result = "<\(name)\(attributesString)"
+
+        if childrenString.isEmpty {
+            result += "/>"
+        }
+        else {
+            result += ">\(childrenString)</\(name)>"
+        }
+
+        return result
+    }
+
+    func toString() -> String {
         if let n = name {
-            var result = "<\(n)\(attributes.toString())"
-            var childrenString = ""
-
-            for child in children {
-                childrenString += child.toString()
-            }
-
-            if childrenString.isEmpty {
-                result += "/>"
-            }
-            else {
-                result += ">\(childrenString)</\(name)>"
-            }
-
-            return result
+            return XMLElement.createString(n,
+                attributesString: attributes.toString(),
+                childrenString: XMLElement.createChildrenString(children))
         }
 
         return ""
     }
 }
 
+struct XMLDocumentTypeDeclaration {
+    let publicID: String?
+    let systemID: String?
+
+    init(publicID: String? = nil, systemID: String? = nil) {
+        self.publicID = publicID
+        self.systemID = systemID
+    }
+}
+
+
+class XMLDocument: XMLElement {
+    var before: XMLMiscNode[]
+    var after: XMLMiscNode[]
+    var omitXMLDeclaration: Bool
+    var doctype: XMLDocumentTypeDeclaration?
+
+    init(_ name: String, attributes: Dictionary<String, String> = [:],
+            children: XMLNode[], before: XMLMiscNode[] = [],
+            after: XMLMiscNode[] = [],
+            omitXMLDeclaration:Bool = false,
+            doctype: XMLDocumentTypeDeclaration? = nil) {
+        self.before = before
+        self.after = after
+        self.omitXMLDeclaration = omitXMLDeclaration
+        self.doctype = doctype
+        super.init(name, attributes: attributes, children: children)
+    }
+}

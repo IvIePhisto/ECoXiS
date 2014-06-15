@@ -1,29 +1,45 @@
-import Foundation
-
-
-enum XMLCharacterScalars: UInt32 {
-    case Colon = 58, A = 65, Z = 90, a = 97, z = 122, Underscore = 95,
-        Minus = 45, Dot = 46, Zero = 48, Nine = 57
-}
-
-
 class XMLUtilities {
-    class func escape(text: String) -> String {
-        if let escapedText = CFXMLCreateStringByEscapingEntities(
-                nil, text.bridgeToObjectiveC(), nil) {
-            return escapedText
+    enum CharacterScalars: UInt32 {
+        case Colon = 58, A = 65, Z = 90, a = 97, z = 122, Underscore = 95,
+            Minus = 45, Dot = 46, Zero = 48, Nine = 57, LessThan = 60,
+            GreaterThan = 62, Ampersand = 38, Apostrophe = 39, QuotationMark = 34
+    }
+
+    enum AttributeValueEscape {
+        case NoAttribute, EscapeQuot, EscapeApos
+    }
+
+    class func escape(value: String, _ attributeValueEscape:
+            AttributeValueEscape = .NoAttribute) -> String {
+        var result = ""
+
+        for unicodeScalar in value.unicodeScalars {
+            switch (unicodeScalar.value, attributeValueEscape) {
+            case (CharacterScalars.LessThan.toRaw(), _):
+                result += "&lt;"
+            case (CharacterScalars.GreaterThan.toRaw(), _):
+                result += "&gt;"
+            case (CharacterScalars.Ampersand.toRaw(), _):
+                result += "&amp;"
+            case (CharacterScalars.Apostrophe.toRaw(), .EscapeApos):
+                result += "&apos;"
+            case (CharacterScalars.QuotationMark.toRaw(), .EscapeQuot):
+                result += "&quot;"
+            default:
+                result += "\(unicodeScalar)"
+            }
         }
 
-        return ""
+        return result
     }
 
     class func isNameStartCharacter(codePoint: UInt32) -> Bool {
-        return XMLCharacterScalars.Colon.toRaw() == codePoint
-            || (XMLCharacterScalars.A.toRaw() <= codePoint
-                    && XMLCharacterScalars.Z.toRaw() >= codePoint)
-            || XMLCharacterScalars.Underscore.toRaw() == codePoint
-            || (XMLCharacterScalars.a.toRaw() <= codePoint
-                    && XMLCharacterScalars.z.toRaw() >= codePoint)
+        return CharacterScalars.Colon.toRaw() == codePoint
+            || (CharacterScalars.A.toRaw() <= codePoint
+                    && CharacterScalars.Z.toRaw() >= codePoint)
+            || CharacterScalars.Underscore.toRaw() == codePoint
+            || (CharacterScalars.a.toRaw() <= codePoint
+                    && CharacterScalars.z.toRaw() >= codePoint)
             || (0xC0 <= codePoint && 0xD6 >= codePoint)
             || (0xD8 <= codePoint && 0xF6 >= codePoint)
             || (0xF8 <= codePoint && 0x2FF >= codePoint)
@@ -42,10 +58,10 @@ class XMLUtilities {
         if isNameStartCharacter(codePoint) {
             return true
         }
-        return XMLCharacterScalars.Minus.toRaw() == codePoint
-            || XMLCharacterScalars.Dot.toRaw() == codePoint
-            || (XMLCharacterScalars.Zero.toRaw() <= codePoint
-                    && XMLCharacterScalars.Nine.toRaw() >= codePoint)
+        return CharacterScalars.Minus.toRaw() == codePoint
+            || CharacterScalars.Dot.toRaw() == codePoint
+            || (CharacterScalars.Zero.toRaw() <= codePoint
+                    && CharacterScalars.Nine.toRaw() >= codePoint)
             || 0xB7 == codePoint
             || (0x300 <= codePoint && 0x36F >= codePoint)
             || (0x203F <= codePoint && 0x2040 >= codePoint)
@@ -76,6 +92,37 @@ class XMLUtilities {
 
         return result
     }
+
+    class func enforceCommentContent(var value: String) -> String {
+        var isFirst = true
+        var index = 0
+        var lastIndex = countElements(value) - 1
+        var result = ""
+        var appendMinus = false
+        var lastWasMinus = false
+
+        for character in value {
+            let isMinus = character == "-"
+            let isLast = index == lastIndex
+
+            if isMinus {
+                appendMinus = !isFirst
+            }
+            else {
+                if appendMinus && !isLast {
+                    result += "-"
+                    appendMinus = false
+                }
+                result += character
+                isFirst = false
+                lastWasMinus = false
+            }
+
+            index++
+        }
+
+        return result
+    }
 }
 
 
@@ -97,26 +144,94 @@ class XMLNode {
 }
 
 
-class XMLText: XMLNode {
-    var value: String
+class XMLContentNode: XMLNode {
+    let _getContent: () -> String
+    let _setContent: String -> ()
+    var content: String {
+        get { return _getContent() }
+        set { _setContent(newValue) }
+    }
 
-    init(_ value: String) {
-        self.value = value
-        super.init(.Text)
+    init(_ nodeType: XMLNodeType, _ content: String,
+            getter: () -> String, setter: String -> ()) {
+        _getContent = getter
+        _setContent = setter
+        super.init(nodeType)
+        self.content = content
+    }
+}
+
+
+class XMLText: XMLContentNode {
+    init(_ content: String) {
+        var c = ""
+        super.init(.Text, content, getter: { c }, setter: { c = $0 })
     }
 
     override func toString() -> String {
-        return XMLUtilities.escape(value)
+        return XMLUtilities.escape(content)
+    }
+}
+
+
+class XMLComment: XMLContentNode {
+    init(_ content: String) {
+        var c = ""
+        super.init(.Comment, content, getter: { c },
+            setter: { c = XMLUtilities.enforceCommentContent($0) })
+    }
+
+    override func toString() -> String {
+        return "<!--\(content)-->"
+    }
+}
+
+
+class XMLProcessingInstruction: XMLNode {
+    let _getTarget: () -> String
+    let _setTarget: String -> ()
+    var target: String {
+        get { return _getTarget() }
+        set { _setTarget(newValue) }
+    }
+
+    let _getValue: () -> String?
+    let _setValue: String? -> ()
+    var value: String? {
+        get { return _getValue() }
+        set { _setValue(newValue) }
+    }
+
+    init(_ target: String, _ value: String?) {
+        var t = ""
+        _getTarget = { t }
+        _setTarget = { t = $0 }
+        var v:String? = ""
+        _getValue = { v }
+        _setValue = { v = $0 }
+        super.init(.ProcessingInstruction)
+        self.target = target
+        self.value = value
+    }
+
+    override func toString() -> String {
+        var result = "<?\(target)"
+
+        if let v = value {
+            result += " " + v
+        }
+
+        return result + "?>"
     }
 }
 
 
 @infix func ==(left: String, right: XMLText) -> Bool {
-    return left == right.value
+    return left == right.content
 }
 
 @infix func ==(left: XMLText, right: String) -> Bool {
-    return left.value == right
+    return left.content == right
 }
 
 
@@ -147,7 +262,7 @@ class XMLAttributes: Sequence {
 
             if let name = maybeName {
                 if let value = $1 {
-                    attrs[name] = value
+                    attrs[name] = $1
                     return true
                 } else {
                     attrs[name] = nil
@@ -187,7 +302,7 @@ class XMLAttributes: Sequence {
         var result = ""
 
         for (name, value) in self {
-            var escapedValue = XMLUtilities.escape(value)
+            var escapedValue = XMLUtilities.escape(value, .EscapeQuot)
             result += " \(name)=\"\(escapedValue)\""
         }
 

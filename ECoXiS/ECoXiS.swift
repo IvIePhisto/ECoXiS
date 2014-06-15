@@ -1,7 +1,27 @@
 class XMLUtilities {
-    enum CharacterScalars: UInt32 {
-        case Colon = 58, A = 65, Z = 90, a = 97, z = 122, Underscore = 95,
-            Minus = 45, Dot = 46, Zero = 48, Nine = 57
+    struct CharacterScalars {
+        static let Colon:UInt32 = 58
+        static let A:UInt32 = 65
+        static let Z:UInt32 = 90
+        static let a:UInt32 = 97
+        static let z:UInt32 = 122
+        static let Underscore:UInt32 = 95
+        static let Minus:UInt32 = 45
+        static let Dot:UInt32 = 46
+        static let Zero:UInt32 = 48
+        static let Nine:UInt32 = 57
+        static let Space:UInt32 = 32
+        static let Return:UInt32 = 13
+        static let NewLine:UInt32 = 10
+        static let Apostrophe:UInt32 = 39
+        static let Slash:UInt32 = 47
+        static let ExclamationMark:UInt32 = 33
+        static let Hashbang:UInt32 = 35
+        static let Percent:UInt32 = 37
+        static let Equals:UInt32 = 61
+        static let QuestionMark:UInt32 = 63
+        static let Semicolon:UInt32 = 59
+        static let At:UInt32 = 64
     }
 
     enum AttributeValueEscape {
@@ -33,12 +53,12 @@ class XMLUtilities {
     }
 
     class func isNameStartCharacter(codePoint: UInt32) -> Bool {
-        return CharacterScalars.Colon.toRaw() == codePoint
-            || (CharacterScalars.A.toRaw() <= codePoint
-                    && CharacterScalars.Z.toRaw() >= codePoint)
-            || CharacterScalars.Underscore.toRaw() == codePoint
-            || (CharacterScalars.a.toRaw() <= codePoint
-                    && CharacterScalars.z.toRaw() >= codePoint)
+        return CharacterScalars.Colon == codePoint
+            || (CharacterScalars.A <= codePoint
+                    && CharacterScalars.Z >= codePoint)
+            || CharacterScalars.Underscore == codePoint
+            || (CharacterScalars.a <= codePoint
+                    && CharacterScalars.z >= codePoint)
             || (0xC0 <= codePoint && 0xD6 >= codePoint)
             || (0xD8 <= codePoint && 0xF6 >= codePoint)
             || (0xF8 <= codePoint && 0x2FF >= codePoint)
@@ -57,10 +77,10 @@ class XMLUtilities {
         if isNameStartCharacter(codePoint) {
             return true
         }
-        return CharacterScalars.Minus.toRaw() == codePoint
-            || CharacterScalars.Dot.toRaw() == codePoint
-            || (CharacterScalars.Zero.toRaw() <= codePoint
-                    && CharacterScalars.Nine.toRaw() >= codePoint)
+        return CharacterScalars.Minus == codePoint
+            || CharacterScalars.Dot == codePoint
+            || (CharacterScalars.Zero <= codePoint
+                    && CharacterScalars.Nine >= codePoint)
             || 0xB7 == codePoint
             || (0x300 <= codePoint && 0x36F >= codePoint)
             || (0x203F <= codePoint && 0x2040 >= codePoint)
@@ -163,6 +183,86 @@ class XMLUtilities {
                 if character != ">" || !lastWasQuestionMark {
                     result += character
                     lastWasQuestionMark = character == "?"
+                }
+            }
+
+            return result
+        }
+
+        return nil
+    }
+
+    class func enforceDoctypeSystemID(systemID: String?) -> (Bool, String?) {
+        if let sysID = systemID {
+            var useQuot: Bool?
+            var result = ""
+
+            for character in sysID {
+                switch character {
+                case "'":
+                    if let uQ = useQuot {
+                        if uQ {
+                            result += character
+                        }
+                    } else {
+                        result += character
+                        useQuot = true
+                    }
+                case "\"":
+                    if let uQ = useQuot {
+                        if !uQ {
+                            result += character
+                        }
+                    } else {
+                        result += character
+                        useQuot = false
+                    }
+                default:
+                    result += character
+                }
+            }
+
+            if !useQuot {
+                useQuot = true
+            }
+
+            return (useQuot!, result)
+        }
+
+        return (true, nil)
+    }
+
+    class func enforceDoctypePublicID(publicID: String?) -> String? {
+        if let pID = publicID {
+            var result = ""
+
+            for unicodeScalar in pID.unicodeScalars {
+                var us = unicodeScalar.value
+
+                switch us {
+                case CharacterScalars.Space,
+                        CharacterScalars.Return,
+                        CharacterScalars.NewLine,
+                        CharacterScalars.ExclamationMark,
+                        CharacterScalars.Colon,
+                        CharacterScalars.Equals,
+                        CharacterScalars.QuestionMark,
+                        CharacterScalars.Semicolon,
+                        CharacterScalars.At,
+                        CharacterScalars.Underscore:
+                    result += "\(unicodeScalar)"
+                default:
+                    if (CharacterScalars.A <= us && CharacterScalars.Z >= us)
+                        || (CharacterScalars.a <= us
+                                && CharacterScalars.z >= us)
+                        || (CharacterScalars.Zero <= us
+                                && CharacterScalars.Nine >= us)
+                        || (CharacterScalars.Apostrophe <= us
+                                && CharacterScalars.Slash >= us)
+                        || (CharacterScalars.Hashbang <= us
+                                && CharacterScalars.Percent >= us) {
+                        result += "\(unicodeScalar)"
+                    }
                 }
             }
 
@@ -482,12 +582,14 @@ class XMLElement: XMLNode {
 }
 
 struct XMLDocumentTypeDeclaration {
-    let publicID: String?
+    let useQuotForSystemID: Bool
     let systemID: String?
+    let publicID: String?
 
-    init(publicID: String? = nil, systemID: String? = nil) {
-        self.publicID = publicID
-        self.systemID = systemID
+    init(systemID: String? = nil, publicID: String? = nil) {
+        (useQuotForSystemID, self.systemID) =
+            XMLUtilities.enforceDoctypeSystemID(systemID)
+        self.publicID = XMLUtilities.enforceDoctypePublicID(publicID)
     }
 }
 

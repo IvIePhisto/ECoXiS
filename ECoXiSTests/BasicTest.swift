@@ -16,7 +16,8 @@ class BasicTest: XCTestCase {
         var fooValue = "<foz'\">"
         var escapedFooValue = "&lt;foz'&quot;&gt;"
         var element = XMLElement("<test/>",
-            ["!foo": fooValue, "<bar/>": "boz"], XMLText(text))
+            ["!foo": fooValue, "<bar/>": "boz"], XMLText(text),
+            XMLProcessingInstruction("foo"))
         XCTAssert(element.name == "test")
         XCTAssert(element[0]! as XMLText == text)
         XCTAssert(text == element[0]! as XMLText)
@@ -33,7 +34,11 @@ class BasicTest: XCTestCase {
         XCTAssert(element.attributes.count == 1)
         XCTAssert(!element.attributes.contains("bar"))
         XCTAssert(element.toString()
-            == "<FooBar foo=\"\(escapedFooValue)\">&lt;Hello World!/&gt;</FooBar>")
+            == "<FooBar foo=\"\(escapedFooValue)\">&lt;Hello World!/&gt;<?foo?></FooBar>")
+        let pi = element[1] as XMLProcessingInstruction
+        pi.value = "bar?> ? >"
+        XCTAssert(pi.toString() == "<?foo bar? ? >?>")
+        pi.target = nil
         element[0] = nil
         element["foo"] = nil
         XCTAssert(element.toString() == "<FooBar/>")

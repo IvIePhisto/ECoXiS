@@ -1,8 +1,7 @@
 class XMLUtilities {
     enum CharacterScalars: UInt32 {
         case Colon = 58, A = 65, Z = 90, a = 97, z = 122, Underscore = 95,
-            Minus = 45, Dot = 46, Zero = 48, Nine = 57, LessThan = 60,
-            GreaterThan = 62, Ampersand = 38, Apostrophe = 39, QuotationMark = 34
+            Minus = 45, Dot = 46, Zero = 48, Nine = 57
     }
 
     enum AttributeValueEscape {
@@ -13,20 +12,20 @@ class XMLUtilities {
             AttributeValueEscape = .NoAttribute) -> String {
         var result = ""
 
-        for unicodeScalar in value.unicodeScalars {
-            switch (unicodeScalar.value, attributeValueEscape) {
-            case (CharacterScalars.LessThan.toRaw(), _):
+        for character in value {
+            switch (character, attributeValueEscape) {
+            case ("<", _):
                 result += "&lt;"
-            case (CharacterScalars.GreaterThan.toRaw(), _):
+            case (">", _):
                 result += "&gt;"
-            case (CharacterScalars.Ampersand.toRaw(), _):
+            case ("&", _):
                 result += "&amp;"
-            case (CharacterScalars.Apostrophe.toRaw(), .EscapeApos):
+            case ("'", .EscapeApos):
                 result += "&apos;"
-            case (CharacterScalars.QuotationMark.toRaw(), .EscapeQuot):
+            case ("\"", .EscapeQuot):
                 result += "&quot;"
             default:
-                result += "\(unicodeScalar)"
+                result += character
             }
         }
 
@@ -93,7 +92,7 @@ class XMLUtilities {
         return result
     }
 
-    class func enforceCommentContent(var value: String) -> String {
+    class func enforceCommentContent(value: String) -> String {
         var isFirst = true
         var index = 0
         var lastIndex = countElements(value) - 1
@@ -122,6 +121,55 @@ class XMLUtilities {
         }
 
         return result
+    }
+
+    class func enforceProcessingInstructionTarget(target: String?) -> String? {
+        if let t = target {
+            if let t = enforceName(t) {
+                if countElements(t) == 3 {
+                    var invalid = true
+                    var index = 0
+
+                    validation: for character in t {
+                        switch (index, character) {
+                        case (0, "x"), (0, "X"), (1, "m"), (1, "M"), (2, "l"),
+                                (2, "L"):
+                            break
+                        default:
+                            invalid = false
+                            break validation
+                        }
+                        index++
+                    }
+
+                    if invalid {
+                        return nil
+                    }
+                }
+
+                return t
+            }
+        }
+
+        return nil
+    }
+
+    class func enforceProcessingInstructionValue(value: String?) -> String? {
+        if let v = value {
+            var result = ""
+            var lastWasQuestionMark = false
+
+            for character in v {
+                if character != ">" || !lastWasQuestionMark {
+                    result += character
+                    lastWasQuestionMark = character == "?"
+                }
+            }
+
+            return result
+        }
+
+        return nil
     }
 }
 
@@ -188,9 +236,9 @@ class XMLComment: XMLContentNode {
 
 
 class XMLProcessingInstruction: XMLNode {
-    let _getTarget: () -> String
-    let _setTarget: String -> ()
-    var target: String {
+    let _getTarget: () -> String?
+    let _setTarget: String? -> ()
+    var target: String? {
         get { return _getTarget() }
         set { _setTarget(newValue) }
     }
@@ -202,26 +250,34 @@ class XMLProcessingInstruction: XMLNode {
         set { _setValue(newValue) }
     }
 
-    init(_ target: String, _ value: String?) {
-        var t = ""
+    init(_ target: String, _ value: String? = nil) {
+        var t:String? = nil
         _getTarget = { t }
-        _setTarget = { t = $0 }
+        _setTarget = {
+            t = XMLUtilities.enforceProcessingInstructionTarget($0)
+        }
         var v:String? = ""
         _getValue = { v }
-        _setValue = { v = $0 }
+        _setValue = { v = XMLUtilities.enforceProcessingInstructionValue($0) }
         super.init(.ProcessingInstruction)
         self.target = target
         self.value = value
     }
 
     override func toString() -> String {
-        var result = "<?\(target)"
+        var result = ""
 
-        if let v = value {
-            result += " " + v
+        if let t = target {
+            result += "<?\(target)"
+
+            if let v = value {
+                result += " \(v)"
+            }
+
+            result += "?>"
         }
 
-        return result + "?>"
+        return result
     }
 }
 
@@ -261,12 +317,14 @@ class XMLAttributes: Sequence {
             var maybeName = XMLUtilities.enforceName($0)
 
             if let name = maybeName {
-                if let value = $1 {
-                    attrs[name] = $1
-                    return true
-                } else {
-                    attrs[name] = nil
-                    return false
+                if !name.isEmpty {
+                    if let value = $1 {
+                        attrs[name] = $1
+                        return true
+                    } else {
+                        attrs[name] = nil
+                        return false
+                    }
                 }
             }
 
@@ -372,22 +430,25 @@ class XMLElement: XMLContainerNode {
     }
 
     override func toString() -> String {
-        var result = "<\(name)\(attributes.toString())"
-
-        if children.count == 0 {
-            result += "/>"
-        }
-        else {
-            result += ">"
+        if let n = name {
+            var result = "<\(n)\(attributes.toString())"
+            var childrenString = ""
 
             for child in children {
-                result += child.toString()
+                childrenString += child.toString()
             }
 
-            result += "</\(name)>"
+            if childrenString.isEmpty {
+                result += "/>"
+            }
+            else {
+                result += ">\(childrenString)</\(name)>"
+            }
+
+            return result
         }
 
-        return result
+        return ""
     }
 }
 

@@ -77,6 +77,7 @@ class XMLUtilities {
         if isNameStartCharacter(codePoint) {
             return true
         }
+        
         return CharacterScalars.Minus == codePoint
             || CharacterScalars.Dot == codePoint
             || (CharacterScalars.Zero <= codePoint

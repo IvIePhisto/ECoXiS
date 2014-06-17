@@ -312,6 +312,7 @@ class XMLElement: XMLNode {
     }
 }
 
+
 struct XMLDocumentTypeDeclaration {
     let useQuotForSystemID: Bool
     let systemID: String?
@@ -324,15 +325,15 @@ struct XMLDocumentTypeDeclaration {
     }
 
     func toString(name: String) -> String {
-        var result = "<!DOCTYPE \(name) "
+        var result = "<!DOCTYPE \(name)"
 
         if let sID = systemID {
             if let pID = publicID {
-                result += "PUBLIC \"\(pID)\" "
+                result += " PUBLIC \"\(pID)\" "
 
             }
             else {
-                result += "SYSTEM "
+                result += " SYSTEM "
             }
 
             if useQuotForSystemID {

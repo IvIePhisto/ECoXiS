@@ -680,7 +680,7 @@ class XMLDocument: Sequence {
         return result
     }
 
-    func toString() -> String {
+    func toString(encoding: String? = nil) -> String {
         var doctypeString: String?
 
         if let dt = doctype {
@@ -696,6 +696,7 @@ class XMLDocument: Sequence {
         }
 
         return XMLDocument.createString(omitXMLDeclaration: omitXMLDeclaration,
-            doctypeString: doctypeString, childrenString: childrenString)
+            encoding: encoding, doctypeString: doctypeString,
+            childrenString: childrenString)
     }
 }

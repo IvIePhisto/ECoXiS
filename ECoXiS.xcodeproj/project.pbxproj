@@ -11,6 +11,8 @@
 		4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C62DFB61947594300D7D67D /* ECoXiS.m */; };
 		4C62DFBD1947594300D7D67D /* libECoXiS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C62DFB11947594300D7D67D /* libECoXiS.dylib */; };
 		4C62DFCD1947596F00D7D67D /* ECoXiS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C62DFCC1947596F00D7D67D /* ECoXiS.swift */; };
+		4C6F23DE1950967D00C22BF7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F23DD1950967D00C22BF7 /* Model.swift */; };
+		4C6F23E0195096D000C22BF7 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F23DF195096D000C22BF7 /* Utilities.swift */; };
 		4CB59469194B6A220030E203 /* ECoXiS-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */; };
 		4CD5ADBD194A0AA400533429 /* BasicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD5ADBC194A0AA400533429 /* BasicTest.swift */; };
 /* End PBXBuildFile section */
@@ -32,6 +34,8 @@
 		4C62DFBC1947594300D7D67D /* ECoXiSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ECoXiSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C62DFC21947594300D7D67D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C62DFCC1947596F00D7D67D /* ECoXiS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ECoXiS.swift; sourceTree = "<group>"; };
+		4C6F23DD1950967D00C22BF7 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		4C6F23DF195096D000C22BF7 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiS-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CB5946A194B6A6C0030E203 /* ECoXiSTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiSTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CD5ADBC194A0AA400533429 /* BasicTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTest.swift; sourceTree = "<group>"; };
@@ -81,6 +85,8 @@
 				4C62DFB41947594300D7D67D /* ECoXiS.h */,
 				4C62DFB61947594300D7D67D /* ECoXiS.m */,
 				4C62DFCC1947596F00D7D67D /* ECoXiS.swift */,
+				4C6F23DF195096D000C22BF7 /* Utilities.swift */,
+				4C6F23DD1950967D00C22BF7 /* Model.swift */,
 			);
 			path = ECoXiS;
 			sourceTree = "<group>";
@@ -204,7 +210,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C6F23DE1950967D00C22BF7 /* Model.swift in Sources */,
 				4C62DFCD1947596F00D7D67D /* ECoXiS.swift in Sources */,
+				4C6F23E0195096D000C22BF7 /* Utilities.swift in Sources */,
 				4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

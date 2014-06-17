@@ -289,6 +289,13 @@ protocol XMLNode {
 protocol XMLMiscNode: XMLNode {}
 
 
+@assignment func += (inout left: XMLNode[], right: XMLMiscNode[]) {
+    for node in right {
+        left.append(node)
+    }
+}
+
+
 class XMLContentNode: XMLNode {
     let nodeType: XMLNodeType
     let _getContent: () -> String
@@ -586,29 +593,109 @@ struct XMLDocumentTypeDeclaration {
     let systemID: String?
     let publicID: String?
 
-    init(systemID: String? = nil, publicID: String? = nil) {
+    init(publicID: String? = nil, systemID: String? = nil) {
         (useQuotForSystemID, self.systemID) =
             XMLUtilities.enforceDoctypeSystemID(systemID)
         self.publicID = XMLUtilities.enforceDoctypePublicID(publicID)
     }
+
+    func toString(name: String) -> String {
+        var result = "<!DOCTYPE \(name) "
+
+        if let sID = systemID {
+            if let pID = publicID {
+                result += "PUBLIC \"\(pID)\" "
+
+            }
+            else {
+                result += "SYSTEM "
+            }
+
+            if useQuotForSystemID {
+                result += "\"\(sID)\""
+            }
+            else {
+                result += "'\(sID)'"
+            }
+        }
+
+        result += ">"
+
+        return result
+    }
 }
 
 
-class XMLDocument: XMLElement {
-    var before: XMLMiscNode[]
-    var after: XMLMiscNode[]
+class XMLDocument: Sequence {
     var omitXMLDeclaration: Bool
     var doctype: XMLDocumentTypeDeclaration?
+    var beforeElement: XMLMiscNode[]
+    var element: XMLElement
+    var afterElement: XMLMiscNode[]
+    var count: Int { return beforeElement.count + 1 + afterElement.count }
 
-    init(_ name: String, attributes: Dictionary<String, String> = [:],
-            children: XMLNode[], before: XMLMiscNode[] = [],
-            after: XMLMiscNode[] = [],
+
+    init(_ element: XMLElement, beforeElement: XMLMiscNode[] = [],
+            afterElement: XMLMiscNode[] = [],
             omitXMLDeclaration:Bool = false,
             doctype: XMLDocumentTypeDeclaration? = nil) {
-        self.before = before
-        self.after = after
+        self.beforeElement = beforeElement
+        self.element = element
+        self.afterElement = afterElement
         self.omitXMLDeclaration = omitXMLDeclaration
         self.doctype = doctype
-        super.init(name, attributes: attributes, children: children)
+    }
+
+    func generate() -> IndexingGenerator<Array<XMLNode>> {
+        var nodes = XMLNode[]()
+        nodes += beforeElement
+        nodes += element
+        nodes += afterElement
+
+        return nodes.generate()
+    }
+
+    class func createString(#omitXMLDeclaration: Bool,
+            encoding: String? = nil,
+            doctypeString: String?,
+            childrenString: String) -> String {
+        var result = ""
+
+        if !omitXMLDeclaration {
+            result += "<?xml version=\"1.0\""
+
+            if let e = encoding {
+                result += " encoding=\"\(e)\""
+            }
+
+            result += "?>"
+        }
+
+        if let dtString = doctypeString {
+            result += dtString
+        }
+
+        result += childrenString
+
+        return result
+    }
+
+    func toString() -> String {
+        var doctypeString: String?
+
+        if let dt = doctype {
+            if let n = element.name {
+                doctypeString = dt.toString(n)
+            }
+        }
+
+        var childrenString = ""
+
+        for child in self {
+            childrenString += child.toString()
+        }
+
+        return XMLDocument.createString(omitXMLDeclaration: omitXMLDeclaration,
+            doctypeString: doctypeString, childrenString: childrenString)
     }
 }

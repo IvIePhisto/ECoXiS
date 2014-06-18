@@ -1,13 +1,15 @@
-operator postfix & {}
+operator postfix & {} // not possible to use & as prefix operator
 
 @postfix func & (content: String) -> String {
     return XMLUtilities.escape(content)
 }
 
+
 @prefix func ! (content: String) -> String {
     let c = XMLUtilities.enforceCommentContent(content)
     return XMLComment.createString(c)
 }
+
 
 func pi(target: String, _ value: String? = nil) -> String {
     let maybeTarget = XMLUtilities.enforceProcessingInstructionTarget(target)
@@ -20,12 +22,12 @@ func pi(target: String, _ value: String? = nil) -> String {
     return ""
 }
 
+
 func el(name: String, _ attributes: Dictionary<String, String> = [:],
-        children: () -> String) -> String {
+        _ children: String = "") -> String {
     let maybeName = XMLUtilities.enforceName(name)
 
     if let n = maybeName {
-        let c = children()
         var preparedAttributes = Dictionary<String, String>()
 
         for (name, value) in attributes {
@@ -37,9 +39,42 @@ func el(name: String, _ attributes: Dictionary<String, String> = [:],
 
         let a = XMLAttributes.createString(preparedAttributes.generate())
         return XMLElement.createString(n, attributesString: a,
-            childrenString: c)
+            childrenString: children)
     }
 
     return ""
 }
 
+
+func el(name: String, children: String) -> String {
+    return el(name, [:], children)
+}
+
+
+func xml(name: String, _ attributes: Dictionary<String, String> = [:],
+            _ children: String = "", omitXMLDeclaration:Bool = false,
+            encoding: String? = nil,
+            doctype: XMLDocumentTypeDeclaration? = nil,
+            beforeElement: String = "", afterElement: String = "") -> String {
+    if let n = XMLUtilities.enforceName(name) {
+        let dt = doctype?.toString(n)
+        let element = el(name, attributes, children)
+        let childrenString = beforeElement + element + afterElement
+
+        return XMLDocument.createString(omitXMLDeclaration: omitXMLDeclaration,
+            encoding: encoding, doctypeString: dt, childrenString: childrenString)
+    }
+    
+    return ""
+}
+
+
+func xml(name: String, children: String, omitXMLDeclaration:Bool = false,
+            encoding: String? = nil,
+            doctype: XMLDocumentTypeDeclaration? = nil,
+            beforeElement: String = "", afterElement: String = "") -> String {
+    return xml(name, [:], children,
+        omitXMLDeclaration: omitXMLDeclaration, encoding: encoding,
+        doctype: doctype, beforeElement: beforeElement,
+        afterElement: afterElement)
+}

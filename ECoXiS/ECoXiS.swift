@@ -32,6 +32,12 @@ operator prefix < {}
     return element
 }
 
+@infix func | (element: XMLElement, node: XMLNode)
+        -> XMLElement {
+    element.children += node
+    return element
+}
+
 
 typealias PI = XMLProcessingInstruction
 typealias Doctype = XMLDocumentTypeDeclaration

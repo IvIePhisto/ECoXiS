@@ -19,9 +19,10 @@ class BasicTest: XCTestCase {
         var element = <"<test/>" | attributes
             | [<&text, PI("foo", "bar"), <!"--foo--bar--"]
 
-        println(el("!Foo Bar", attributes) {
-            !"--foo--bar--" + fooValue& + pi("foo", "bar")
-        })
+        println(xml("!Foo Bar", attributes,
+            !"--foo--bar--" + fooValue& + pi("foo", "bar") + el("test"),
+            omitXMLDeclaration: true, doctype: Doctype())
+        )
 
         XCTAssert(element.name == "test")
         XCTAssert(element[0]! as XMLText == text)

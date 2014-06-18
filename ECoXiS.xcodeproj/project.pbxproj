@@ -40,6 +40,7 @@
 		4C6F23E11951E4E100C22BF7 /* StringCreation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCreation.swift; sourceTree = "<group>"; };
 		4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiS-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CB5946A194B6A6C0030E203 /* ECoXiSTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiSTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		4CB7BB10195233FF00186153 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CD5ADBC194A0AA400533429 /* BasicTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +66,7 @@
 		4C62DFA81947594200D7D67D = {
 			isa = PBXGroup;
 			children = (
+				4CB7BB10195233FF00186153 /* README.md */,
 				4C62DFB31947594300D7D67D /* ECoXiS */,
 				4C62DFC01947594300D7D67D /* ECoXiSTests */,
 				4C62DFB21947594300D7D67D /* Products */,

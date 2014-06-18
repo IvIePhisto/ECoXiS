@@ -13,6 +13,7 @@
 		4C62DFCD1947596F00D7D67D /* ECoXiS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C62DFCC1947596F00D7D67D /* ECoXiS.swift */; };
 		4C6F23DE1950967D00C22BF7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F23DD1950967D00C22BF7 /* Model.swift */; };
 		4C6F23E0195096D000C22BF7 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F23DF195096D000C22BF7 /* Utilities.swift */; };
+		4C6F23E21951E4E100C22BF7 /* StringCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F23E11951E4E100C22BF7 /* StringCreation.swift */; };
 		4CB59469194B6A220030E203 /* ECoXiS-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */; };
 		4CD5ADBD194A0AA400533429 /* BasicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD5ADBC194A0AA400533429 /* BasicTest.swift */; };
 /* End PBXBuildFile section */
@@ -36,6 +37,7 @@
 		4C62DFCC1947596F00D7D67D /* ECoXiS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ECoXiS.swift; sourceTree = "<group>"; };
 		4C6F23DD1950967D00C22BF7 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		4C6F23DF195096D000C22BF7 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		4C6F23E11951E4E100C22BF7 /* StringCreation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringCreation.swift; sourceTree = "<group>"; };
 		4CB59468194B6A220030E203 /* ECoXiS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiS-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CB5946A194B6A6C0030E203 /* ECoXiSTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiSTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CD5ADBC194A0AA400533429 /* BasicTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTest.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				4C62DFCC1947596F00D7D67D /* ECoXiS.swift */,
 				4C6F23DF195096D000C22BF7 /* Utilities.swift */,
 				4C6F23DD1950967D00C22BF7 /* Model.swift */,
+				4C6F23E11951E4E100C22BF7 /* StringCreation.swift */,
 			);
 			path = ECoXiS;
 			sourceTree = "<group>";
@@ -213,6 +216,7 @@
 				4C6F23DE1950967D00C22BF7 /* Model.swift in Sources */,
 				4C62DFCD1947596F00D7D67D /* ECoXiS.swift in Sources */,
 				4C6F23E0195096D000C22BF7 /* Utilities.swift in Sources */,
+				4C6F23E21951E4E100C22BF7 /* StringCreation.swift in Sources */,
 				4C62DFB71947594300D7D67D /* ECoXiS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -16,11 +16,11 @@ class BasicTest: XCTestCase {
         var fooValue = "<foz'\">"
         var escapedFooValue = "&lt;foz'&quot;&gt;"
         var attributes = ["!foo": fooValue, "<bar/>": "boz"]
-        var element = </"<test/>" + attributes
-            + [<&text, PI("foo", "bar"), <!"--foo--bar--"]
+        var element = <"<test/>" | attributes
+            | [<&text, PI("foo", "bar"), <!"--foo--bar--"]
 
         println(el("!Foo Bar", attributes) {
-            !<"--foo--bar--" + &<fooValue + pi("foo", "bar")
+            !"--foo--bar--" + fooValue& + pi("foo", "bar")
         })
 
         XCTAssert(element.name == "test")

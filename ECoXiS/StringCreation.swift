@@ -1,12 +1,10 @@
-operator prefix &< {}
+operator postfix & {}
 
-@prefix func &< (content: String) -> String {
+@postfix func & (content: String) -> String {
     return XMLUtilities.escape(content)
 }
 
-operator prefix !< {}
-
-@prefix func !< (content: String) -> String {
+@prefix func ! (content: String) -> String {
     let c = XMLUtilities.enforceCommentContent(content)
     return XMLComment.createString(c)
 }
@@ -44,3 +42,4 @@ func el(name: String, _ attributes: Dictionary<String, String> = [:],
 
     return ""
 }
+

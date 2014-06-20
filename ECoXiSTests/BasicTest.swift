@@ -2,21 +2,13 @@ import XCTest
 import ECoXiS
 
 class BasicTest: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func testPI() {
         let target = "-fo o <"
         let invalidTarget = "<?-"
         let value = "bar?>"
         let piString = "<?foo bar??>"
         let emptyPIString = "<?foo?>"
+        // Model:
         var processingInstruction = PI(target, value)
         XCTAssert(processingInstruction.target == "foo")
         XCTAssert(processingInstruction.value == "bar?")
@@ -36,6 +28,7 @@ class BasicTest: XCTestCase {
         let content = "--Foo----Bar--"
         let invalidContent = "----"
         let commentString = "<!--Foo-Bar-->"
+        // Model:
         var comment = <!content
         XCTAssert(comment.content == "Foo-Bar")
         XCTAssert(comment.toString() == commentString)
@@ -50,6 +43,7 @@ class BasicTest: XCTestCase {
     func testText() {
         let content = "<Foo & Bar>"
         let contentString = "&lt;Foo &amp; Bar&gt;"
+        // Model:
         let text = <&content
         XCTAssert(text == content)
         XCTAssert(content == text)
@@ -64,6 +58,7 @@ class BasicTest: XCTestCase {
         let escapedFooValue = "&lt;foz'&quot;&gt;"
         let elementString = "<FooBar foo=\"&lt;foz'&quot;&gt;\">&lt;Hello World!/&gt;<?foo bar?><!--foo-bar--></FooBar>"
         let attributes = ["!foo": fooValue, "<bar/>": "boz"]
+        // Model:
         var element = <"<test/>" | attributes
             | [<&text, PI("foo", "bar"), <!"--foo--bar--"]
         XCTAssert(element.name == "test")
@@ -89,5 +84,23 @@ class BasicTest: XCTestCase {
         XCTAssert(el("1Foo/Bar?", ["foo": fooValue], text& + pi("foo", "bar")
             + !"--foo--bar--") == elementString)
         XCTAssert(el("1Foo/Bar?") == "<FooBar/>")
+    }
+
+    func testDoctype() {
+        var doctype = Doctype(publicID: "<Foo Bar>", systemID: "\"foo'\"bar")
+        XCTAssert(doctype.publicID == "Foo Bar")
+        XCTAssert(!doctype.useQuotForSystemID)
+        XCTAssert(doctype.systemID == "\"foo\"bar")
+        XCTAssert(doctype.toString("test") == "<!DOCTYPE test PUBLIC \"Foo Bar\" '\"foo\"bar'>")
+        doctype.systemID = nil
+        XCTAssert(doctype.publicID != nil
+            && doctype.toString("test") == "<!DOCTYPE test>")
+        doctype.systemID = "foo'bar\""
+        XCTAssert(doctype.useQuotForSystemID)
+        XCTAssert(doctype.systemID == "foo'bar")
+        doctype.publicID = nil
+        XCTAssert(doctype.toString("test") == "<!DOCTYPE test SYSTEM \"foo'bar\">")
+        doctype.systemID = nil
+        XCTAssert(doctype.toString("foo") == "<!DOCTYPE foo>")
     }
 }

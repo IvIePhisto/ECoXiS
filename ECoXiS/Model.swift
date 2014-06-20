@@ -200,15 +200,36 @@ class XMLElement: XMLNode {
 }
 
 
-struct XMLDocumentTypeDeclaration {
-    let useQuotForSystemID: Bool
-    let systemID: String?
-    let publicID: String?
+class XMLDocumentTypeDeclaration {
+    let _getSystemID: () -> String?
+    let _setSystemID: String? -> ()
+    let _getPublicID: () -> String?
+    let _setPublicID: String? -> ()
+    let _getUseQuotForSystemID: () -> Bool
+
+    var useQuotForSystemID: Bool { return _getUseQuotForSystemID() }
+    var systemID: String? {
+        get { return _getSystemID() }
+        set { _setSystemID(newValue) }
+    }
+    var publicID: String? {
+        get { return _getPublicID() }
+        set { _setPublicID(newValue) }
+    }
 
     init(publicID: String? = nil, systemID: String? = nil) {
-        (useQuotForSystemID, self.systemID) =
-            XMLUtilities.enforceDoctypeSystemID(systemID)
-        self.publicID = XMLUtilities.enforceDoctypePublicID(publicID)
+        var pubID: String?
+        _getPublicID = { pubID }
+        _setPublicID = { pubID = XMLUtilities.enforceDoctypePublicID($0) }
+        var sysID: String?
+        var useQuot: Bool = true
+        _getSystemID = { sysID }
+        _setSystemID = {
+            (useQuot, sysID) = XMLUtilities.enforceDoctypeSystemID($0)
+        }
+        _getUseQuotForSystemID = { useQuot }
+        self.publicID = publicID
+        self.systemID = systemID
     }
 
     func toString(name: String) -> String {

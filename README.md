@@ -67,7 +67,7 @@ defined by the following:
 `class XMLDocument: Sequence`
 :   Implements a XML document. It contains an `XMLElement` instance as the
     document element, before and after that may be `XMLMiscNode` instances.
-    It can also contain a `DocumentTypeDeclaration`.
+    It can also contain a `XMLDocumentTypeDeclaration`.
 
 `class XMLAttributes`
 :   A `Dictionary<String, String>`-like object representing attributes of

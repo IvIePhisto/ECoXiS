@@ -314,6 +314,10 @@ class XMLDocument: Sequence {
     }
 
     func toString(encoding: String? = nil) -> String {
+        if element.name == nil {
+            return ""
+        }
+        
         var doctypeString: String?
 
         if let dt = doctype {
@@ -373,7 +377,7 @@ class XMLComment: XMLMiscNode {
     }
 
     init(_ content: String) {
-        var c:String? = nil
+        var c:String?
         _getContent = { c }
         _setContent = { c = XMLUtilities.enforceCommentContent($0) }
         self.content = content

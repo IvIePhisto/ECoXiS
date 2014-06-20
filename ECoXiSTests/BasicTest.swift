@@ -91,7 +91,8 @@ class BasicTest: XCTestCase {
         XCTAssert(doctype.publicID == "Foo Bar")
         XCTAssert(!doctype.useQuotForSystemID)
         XCTAssert(doctype.systemID == "\"foo\"bar")
-        XCTAssert(doctype.toString("test") == "<!DOCTYPE test PUBLIC \"Foo Bar\" '\"foo\"bar'>")
+        XCTAssert(doctype.toString("test")
+            == "<!DOCTYPE test PUBLIC \"Foo Bar\" '\"foo\"bar'>")
         doctype.systemID = nil
         XCTAssert(doctype.publicID != nil
             && doctype.toString("test") == "<!DOCTYPE test>")
@@ -99,8 +100,26 @@ class BasicTest: XCTestCase {
         XCTAssert(doctype.useQuotForSystemID)
         XCTAssert(doctype.systemID == "foo'bar")
         doctype.publicID = nil
-        XCTAssert(doctype.toString("test") == "<!DOCTYPE test SYSTEM \"foo'bar\">")
+        XCTAssert(doctype.toString("test")
+            == "<!DOCTYPE test SYSTEM \"foo'bar\">")
         doctype.systemID = nil
         XCTAssert(doctype.toString("foo") == "<!DOCTYPE foo>")
+    }
+
+    func testDocument() {
+        var comment = <!"before" // fix for exception if not assigned to variable
+        var processingInstruction = PI("after") // fix for exception if not assigned to variable
+        var document = XML(<"FooBar", beforeElement: [comment],
+            afterElement: [processingInstruction], doctype: Doctype())
+        XCTAssert(document.toString() == "<?xml version=\"1.0\"?><!DOCTYPE FooBar><!--before--><FooBar/><?after?>")
+        document.element.name = nil
+        var t = document.toString()
+        XCTAssert(document.toString() == "")
+        document.element.name = "test"
+        document.omitXMLDeclaration = true
+        document.doctype = nil
+        document.beforeElement = []
+        document.afterElement = []
+        XCTAssert(document.toString() == "<test/>")
     }
 }

@@ -77,7 +77,7 @@ class XMLUtilities {
         if isNameStartCharacter(codePoint) {
             return true
         }
-        
+
         return CharacterScalars.Minus == codePoint
             || CharacterScalars.Dot == codePoint
             || (CharacterScalars.Zero <= codePoint
@@ -93,8 +93,13 @@ class XMLUtilities {
         var check: UInt32 -> Bool = isNameStartCharacter
         check = {
             (codePoint: UInt32) -> Bool in
-            check = self.isNameCharacter
-            return self.isNameStartCharacter(codePoint)
+            let isNameStartCharacter = self.isNameStartCharacter(codePoint)
+
+            if isNameStartCharacter {
+                check = self.isNameCharacter
+            }
+
+            return isNameStartCharacter
         }
 
         for unicodeScalar in name.unicodeScalars {
@@ -113,59 +118,50 @@ class XMLUtilities {
         return result
     }
 
-    class func enforceCommentContent(value: String) -> String {
-        var isFirst = true
-        var index = 0
-        var lastIndex = countElements(value) - 1
-        var result = ""
-        var appendMinus = false
-        var lastWasMinus = false
+    class func enforceCommentContent(content: String?) -> String? {
+        if let c = content {
+            var isFirst = true
+            var index = 0
+            var lastIndex = countElements(c) - 1
+            var result = ""
+            var appendMinus = false
+            var lastWasMinus = false
 
-        for character in value {
-            let isMinus = character == "-"
-            let isLast = index == lastIndex
+            for character in c {
+                let isMinus = character == "-"
+                let isLast = index == lastIndex
 
-            if isMinus {
-                appendMinus = !isFirst
-            }
-            else {
-                if appendMinus && !isLast {
-                    result += "-"
-                    appendMinus = false
+                if isMinus {
+                    appendMinus = !isFirst
                 }
-                result += character
-                isFirst = false
-                lastWasMinus = false
+                else {
+                    if appendMinus && !isLast {
+                        result += "-"
+                        appendMinus = false
+                    }
+                    result += character
+                    isFirst = false
+                    lastWasMinus = false
+                }
+
+                index++
             }
 
-            index++
+            if result.isEmpty {
+                return nil
+            }
+
+            return result
         }
 
-        return result
+        return nil
     }
 
     class func enforceProcessingInstructionTarget(target: String?) -> String? {
         if let t = target {
             if let t = enforceName(t) {
-                if countElements(t) == 3 {
-                    var invalid = true
-                    var index = 0
-
-                    validation: for character in t {
-                        switch (index, character) {
-                        case (0, "x"), (0, "X"), (1, "m"), (1, "M"), (2, "l"),
-                                (2, "L"):
-                            break
-                        default:
-                            invalid = false
-                            break validation
-                        }
-                        index++
-                    }
-
-                    if invalid {
-                        return nil
-                    }
+                if t.lowercaseString == "xml" {
+                    return nil
                 }
 
                 return t

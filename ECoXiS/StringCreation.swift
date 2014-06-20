@@ -1,4 +1,4 @@
-operator postfix & {} // not possible to use & as prefix operator
+operator postfix & {} // not possible to use '&' as prefix operator
 
 @postfix func & (content: String) -> String {
     return XMLUtilities.escape(content)
@@ -6,8 +6,13 @@ operator postfix & {} // not possible to use & as prefix operator
 
 
 @prefix func ! (content: String) -> String {
-    let c = XMLUtilities.enforceCommentContent(content)
-    return XMLComment.createString(c)
+    let maybeContent = XMLUtilities.enforceCommentContent(content)
+    
+    if let c = maybeContent {
+        return XMLComment.createString(c)
+    }
+
+    return ""
 }
 
 
@@ -32,8 +37,7 @@ func el(name: String, _ attributes: Dictionary<String, String> = [:],
 
         for (name, value) in attributes {
             if let n = XMLUtilities.enforceName(name) {
-                let v = XMLUtilities.escape(value, .EscapeQuot)
-                preparedAttributes[n] = v
+                preparedAttributes[n] = value
             }
         }
 
@@ -64,7 +68,7 @@ func xml(name: String, _ attributes: Dictionary<String, String> = [:],
         return XMLDocument.createString(omitXMLDeclaration: omitXMLDeclaration,
             encoding: encoding, doctypeString: dt, childrenString: childrenString)
     }
-    
+
     return ""
 }
 

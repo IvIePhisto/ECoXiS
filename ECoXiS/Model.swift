@@ -19,119 +19,6 @@ protocol XMLMiscNode: XMLNode {}
     }
 }
 
-
-class XMLContentNode: XMLNode {
-    let nodeType: XMLNodeType
-    let _getContent: () -> String
-    let _setContent: String -> ()
-    var content: String {
-        get { return _getContent() }
-        set { _setContent(newValue) }
-    }
-
-    init(_ nodeType: XMLNodeType, _ content: String,
-            getter: () -> String, setter: String -> ()) {
-        _getContent = getter
-        _setContent = setter
-        self.nodeType = nodeType
-        self.content = content
-    }
-
-    class func createString(content: String) -> String {
-        return ""
-    }
-
-    func toString() -> String {
-        return ""
-    }
-}
-
-
-class XMLText: XMLContentNode {
-    init(_ content: String) {
-        var c = ""
-        super.init(.Text, content, getter: { c }, setter: { c = $0 })
-    }
-
-    override class func createString(content: String) -> String {
-        return XMLUtilities.escape(content)
-    }
-
-    override func toString() -> String {
-        return XMLText.createString(content)
-    }
-}
-
-
-class XMLComment: XMLContentNode, XMLMiscNode {
-    init(_ content: String) {
-        var c = ""
-        super.init(.Comment, content, getter: { c },
-            setter: { c = XMLUtilities.enforceCommentContent($0) })
-    }
-
-    override class func createString(content: String) -> String {
-        return "<!--\(content)-->"
-    }
-
-    override func toString() -> String {
-        return XMLComment.createString(content)
-    }
-}
-
-
-class XMLProcessingInstruction: XMLMiscNode {
-    let nodeType = XMLNodeType.ProcessingInstruction
-
-    let _getTarget: () -> String?
-    let _setTarget: String? -> ()
-    var target: String? {
-        get { return _getTarget() }
-        set { _setTarget(newValue) }
-    }
-
-    let _getValue: () -> String?
-    let _setValue: String? -> ()
-    var value: String? {
-        get { return _getValue() }
-        set { _setValue(newValue) }
-    }
-
-    init(_ target: String, _ value: String? = nil) {
-        var t:String? = nil
-        _getTarget = { t }
-        _setTarget = {
-            t = XMLUtilities.enforceProcessingInstructionTarget($0)
-        }
-        var v:String? = ""
-        _getValue = { v }
-        _setValue = { v = XMLUtilities.enforceProcessingInstructionValue($0) }
-        self.target = target
-        self.value = value
-    }
-
-    class func createString(target: String, value: String?) -> String {
-        var result = ""
-        result += "<?\(target)"
-
-        if let v = value {
-            result += " \(v)"
-        }
-
-        result += "?>"
-        return result
-    }
-
-    func toString() -> String {
-        if let t = target {
-            return XMLProcessingInstruction.createString(t, value: value)
-        }
-
-        return ""
-    }
-}
-
-
 @infix func ==(left: String, right: XMLText) -> Bool {
     return left == right.content
 }
@@ -425,3 +312,114 @@ class XMLDocument: Sequence {
             childrenString: childrenString)
     }
 }
+
+
+class XMLText: XMLNode {
+    let nodeType = XMLNodeType.Text
+
+    let _getContent: () -> String
+    let _setContent: String -> ()
+    var content: String {
+        get { return _getContent() }
+        set { _setContent(newValue) }
+    }
+
+    init(_ content: String) {
+        var c = ""
+        _getContent = { c }
+        _setContent = { c = $0 }
+        self.content = content
+    }
+
+    class func createString(content: String) -> String {
+        return XMLUtilities.escape(content)
+    }
+
+    func toString() -> String {
+        return XMLText.createString(content)
+    }
+}
+
+
+class XMLComment: XMLMiscNode {
+    let nodeType = XMLNodeType.Comment
+
+    let _getContent: () -> String?
+    let _setContent: String? -> ()
+    var content: String? {
+        get { return _getContent() }
+        set { _setContent(newValue) }
+    }
+
+    init(_ content: String) {
+        var c:String? = nil
+        _getContent = { c }
+        _setContent = { c = XMLUtilities.enforceCommentContent($0) }
+        self.content = content
+    }
+
+    class func createString(content: String) -> String {
+        return "<!--\(content)-->"
+    }
+
+    func toString() -> String {
+        if let c = content {
+            return XMLComment.createString(c)
+        }
+
+        return ""
+    }
+}
+
+
+class XMLProcessingInstruction: XMLMiscNode {
+    let nodeType = XMLNodeType.ProcessingInstruction
+
+    let _getTarget: () -> String?
+    let _setTarget: String? -> ()
+    var target: String? {
+        get { return _getTarget() }
+        set { _setTarget(newValue) }
+    }
+
+    let _getValue: () -> String?
+    let _setValue: String? -> ()
+    var value: String? {
+        get { return _getValue() }
+        set { _setValue(newValue) }
+    }
+
+    init(_ target: String, _ value: String? = nil) {
+        var t:String? = nil
+        _getTarget = { t }
+        _setTarget = {
+            t = XMLUtilities.enforceProcessingInstructionTarget($0)
+        }
+        var v:String? = nil
+        _getValue = { v }
+        _setValue = { v = XMLUtilities.enforceProcessingInstructionValue($0) }
+        self.target = target
+        self.value = value
+    }
+
+    class func createString(target: String, value: String?) -> String {
+        var result = ""
+        result += "<?\(target)"
+
+        if let v = value {
+            result += " \(v)"
+        }
+
+        result += "?>"
+        return result
+    }
+
+    func toString() -> String {
+        if let t = target {
+            return XMLProcessingInstruction.createString(t, value: value)
+        }
+
+        return ""
+    }
+}
+

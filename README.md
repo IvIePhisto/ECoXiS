@@ -6,6 +6,9 @@ subject to change. It supports the full XML standard except for standalone
 document type declarations and entity definitions. There is no CDATA
 representation, because that is just an easier way to markup certain text nodes.
 
+This project uses the MIT License, so you may freely use, distribute and modify
+it, provided you include the content of `License.txt`.
+
 
 ## Example
 

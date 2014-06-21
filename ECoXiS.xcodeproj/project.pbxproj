@@ -42,6 +42,7 @@
 		4CB5946A194B6A6C0030E203 /* ECoXiSTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ECoXiSTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4CB7BB10195233FF00186153 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CD5ADBC194A0AA400533429 /* BasicTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTest.swift; sourceTree = "<group>"; };
+		4CEEB0661955D7CC00DA61D5 /* License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +67,7 @@
 		4C62DFA81947594200D7D67D = {
 			isa = PBXGroup;
 			children = (
+				4CEEB0661955D7CC00DA61D5 /* License.txt */,
 				4CB7BB10195233FF00186153 /* README.md */,
 				4C62DFB31947594300D7D67D /* ECoXiS */,
 				4C62DFC01947594300D7D67D /* ECoXiSTests */,

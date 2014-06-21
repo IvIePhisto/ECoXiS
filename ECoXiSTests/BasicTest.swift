@@ -5,8 +5,7 @@ import ECoXiS
 func template(title: String, message: String) -> XMLDocument {
     let titleTextNode = <&title
     return XML(
-        <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
-        | [
+        <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"] | [
             <"head" | [<"title" | titleTextNode],
             <"body" | [
                 <"h1" | titleTextNode,

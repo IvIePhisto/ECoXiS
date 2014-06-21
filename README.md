@@ -12,37 +12,40 @@ representation, because that is just an easier way to markup certain text nodes.
 Here is example Swift code using ECoXiS. It implements a template function to
 create a HTML5 document:
 
-    func template(title: String, message: String) -> XMLDocument {
-        let escapedTitle = <&title
-        return XML(
-            <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
-            | [
-                <"head" | [<"title" | escapedTitle],
-                <"body" | [
-                    <"h1" | escapedTitle,
-                    <"p!" | <&message,
-                    <!"This is a comment, multiple --- are collapsed!--",
-                    PI("processing-instruction-target", "PI?> content")
-                ]
-            ],
-            omitXMLDeclaration: true, doctype: Doctype()
-        )
-    }
+```Swift
+func template(title: String, message: String) -> XMLDocument {
+    let escapedTitle = <&title
+    return XML(
+        <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
+        | [
+            <"head" | [<"title" | escapedTitle],
+            <"body" | [
+                <"h1" | escapedTitle,
+                <"p!" | <&message,
+                <!"This is a comment, multiple --- are collapsed!--",
+                PI("processing-instruction-target", "PI?> content")
+            ]
+        ],
+        omitXMLDeclaration: true, doctype: Doctype()
+    )
+}
+```
 
 The call of `template("<Foo Bar>", "Hello world!").toString()` yields (here
 pretty printed for better readability):
 
-    <!DOCTYPE html>
-    <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-        <head><title>&lt;Foo Bar&gt;</title></head>
-        <body>
-            <h1>&lt;Foo Bar&gt;</h1>
-            <p>Hello World!</p>
-            <!--This is a comment, multiple - are collapsed!-->
-            <?processing-instruction-target PI? content?>
-        </body>
-    </html>
-
+```XML
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head><title>&lt;Foo Bar&gt;</title></head>
+    <body>
+        <h1>&lt;Foo Bar&gt;</h1>
+        <p>Hello World!</p>
+        <!--This is a comment, multiple - are collapsed!-->
+        <?processing-instruction-target PI? content?>
+    </body>
+</html>
+```
 
 ## API
 

@@ -3,13 +3,13 @@ import ECoXiS
 
 
 func template(title: String, message: String) -> XMLDocument {
-    let escapedTitle = <&title
+    let titleTextNode = <&title
     return XML(
         <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
         | [
-            <"head" | [<"title" | escapedTitle],
+            <"head" | [<"title" | titleTextNode],
             <"body" | [
-                <"h1" | escapedTitle,
+                <"h1" | titleTextNode,
                 <"p!" | <&message,
                 <!"This is a comment, multiple --- are collapsed!--",
                 PI("processing-instruction-target", "PI?> content")

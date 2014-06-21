@@ -1,6 +1,25 @@
 import XCTest
 import ECoXiS
 
+
+func template(title: String, message: String) -> XMLDocument {
+    let escapedTitle = <&title
+    return XML(
+        <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
+        | [
+            <"head" | [<"title" | escapedTitle],
+            <"body" | [
+                <"h1" | escapedTitle,
+                <"p!" | <&message,
+                <!"This is a comment, multiple --- are collapsed!--",
+                PI("processing-instruction-target", "PI?> content")
+            ]
+        ],
+        omitXMLDeclaration: true, doctype: Doctype()
+    )
+}
+
+
 class BasicTest: XCTestCase {
     func testPI() {
         let target = "-fo o <"
@@ -107,19 +126,30 @@ class BasicTest: XCTestCase {
     }
 
     func testDocument() {
-        var comment = <!"before" // fix for exception if not assigned to variable
-        var processingInstruction = PI("after") // fix for exception if not assigned to variable
+        let documentString = "<?xml version=\"1.0\"?><!DOCTYPE FooBar><!--before--><FooBar/><?after?>"
+        // Model:
+        let comment = <!"before" // fix for exception if not assigned to variable
+        let processingInstruction = PI("after") // fix for exception if not assigned to variable
         var document = XML(<"FooBar", beforeElement: [comment],
             afterElement: [processingInstruction], doctype: Doctype())
-        XCTAssert(document.toString() == "<?xml version=\"1.0\"?><!DOCTYPE FooBar><!--before--><FooBar/><?after?>")
+        XCTAssert(document.toString() == documentString)
         document.element.name = nil
-        var t = document.toString()
-        XCTAssert(document.toString() == "")
+        XCTAssert(document.toString().isEmpty)
         document.element.name = "test"
         document.omitXMLDeclaration = true
         document.doctype = nil
         document.beforeElement = []
         document.afterElement = []
         XCTAssert(document.toString() == "<test/>")
+        // Text:
+        XCTAssert(xml("FooBar", doctype: Doctype(), beforeElement: !"before",
+            afterElement: pi("after")) == documentString)
+        XCTAssert(xml("<>").isEmpty)
+        XCTAssert(xml("test", omitXMLDeclaration: true) == "<test/>")
+    }
+
+    func testTemplate() {
+        let templateString = "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>&lt;Foo Bar&gt;</title></head><body><h1>&lt;Foo Bar&gt;</h1><p>Hello World!</p><!--This is a comment, multiple - are collapsed!--><?processing-instruction-target PI? content?></body></html>"
+        XCTAssert(template("<Foo Bar>", "Hello World!").toString() == templateString)
     }
 }

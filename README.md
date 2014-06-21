@@ -2,22 +2,26 @@
 
 This library implements a library to create XML in Apple's Swift as an XCode 6
 project. It is currently in alpha status, meaning the implementation and
-interfaces may be subject to change.
+interfaces may be subject to change. It supports the full XML standard except
+for standalone document type declarations and entity definitions. There is no
+CDATA representation, because that is just an easier way to markup certain text
+nodes.
+
 
 ## Example
 
-Here is example Swift code using ECoXiS to implement a template function for
-creating a HTML5 document:
+Here is example Swift code using ECoXiS. It implements a template function to
+create a HTML5 document:
 
-    func template(title: String, message: String) -> String {
+    func template(title: String, message: String) -> XMLDocument {
         let escapedTitle = <&title
         return XML(
-            <"html" + ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
-            + [
-                <"head" + [<"title" + [escapedTitle]],
-                <"body" + [
-                    <"h1" + escapedTitle,
-                    <"p!" + <&message,
+            <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"]
+            | [
+                <"head" | [<"title" | escapedTitle],
+                <"body" | [
+                    <"h1" | escapedTitle,
+                    <"p!" | <&message,
                     <!"This is a comment, multiple --- are collapsed!--",
                     PI("processing-instruction-target", "PI?> content")
                 ]
@@ -26,18 +30,17 @@ creating a HTML5 document:
         )
     }
 
-The call of `template("<Foo Bar>", "Hello world!")` yields (here pretty printed
-for better readability):
+The call of `template("<Foo Bar>", "Hello world!").toString()` yields (here
+pretty printed for better readability):
 
     <!DOCTYPE html>
     <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
         <head><title>&lt;Foo Bar&gt;</title></head>
         <body>
             <h1>&lt;Foo Bar&gt;</h1>
-            <p>Hello World!
-                <!--This is a comment, multiple - are collapsed!-->
-                <?processing-instruction-target PI content?>
-            </p>
+            <p>Hello World!</p>
+            <!--This is a comment, multiple - are collapsed!-->
+            <?processing-instruction-target PI? content?>
         </body>
     </html>
 
@@ -50,7 +53,7 @@ following for a description of the important files and their contents.
 ### XML Object Model – `ECoXiS/Model.swift`
 
 In this file a object model for XML is defined. It enforces well-formedness.
-Strings given for a XML constructs (like element or attribute names) are
+Strings given for XML constructs (like element or attribute names) are
 stripped of invalid characters or strings. If such a construct becomes
 invalid by these modifications, its `toString()` method returns an empty
 string (e.g. if an element's name contains no valid characters, calling
@@ -63,6 +66,9 @@ defined by the following:
 `protocol XMLMiscNode: XMLNode`
 :   Used to mark comment and processing instruction nodes to be used as
     document child nodes.
+
+`class XMLDocumentTypeDeclaration`
+:   Contains the data of a document type declaration.
 
 `class XMLDocument: Sequence`
 :   Implements a XML document. It contains an `XMLElement` instance as the
@@ -102,14 +108,14 @@ Type-aliases
 Operator  `@prefix func < (String) -> XMLElement`
 :   Creates a `XMLElement` instance, the name being the given string.
 
-Operator `@infix func + (XMLElement, Dictionary<String, String>) -> XMLElement`
+Operator `@infix func | (XMLElement, Dictionary<String, String>) -> XMLElement`
 :   For each entry in the given dictionary set the the appropriate attribute on
     the element.
 
-Operator `@infix func + (XMLElement, XMLNode) -> XMLElement`
+Operator `@infix func | (XMLElement, XMLNode) -> XMLElement`
 :   Appends the given node to the children of the element.
 
-Operator `@infix func + (XMLElement, XMLNode[]) -> XMLElement`
+Operator `@infix func | (XMLElement, XMLNode[]) -> XMLElement`
 :   Appends all the nodes given in the array to the children of the element.
 
 Operator `@prefix func <& (String) -> XMLText`
@@ -144,8 +150,8 @@ Operator `@prefix func ! (String) -> String`
 
 ### Utilities for XML – `ECoXiS/Utilities.swift`
 
-Contains the class `XMLUtilities` which contains class methods to escape text
-for XML and to enforce various syntax constraints of XML.
+Contains the class `XMLUtilities` which has class methods to escape text for
+XML and to enforce various syntax constraints of XML.
 
 
 ### File `ECoXiSTests/BasicTests.swift`

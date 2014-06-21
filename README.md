@@ -1,11 +1,10 @@
 # ECoXiS – Easy Creation of XML in Swift
 
-This library implements a library to create XML in Apple's Swift as an XCode 6
-project. It is currently in alpha status, meaning the implementation and
-interfaces may be subject to change. It supports the full XML standard except
-for standalone document type declarations and entity definitions. There is no
-CDATA representation, because that is just an easier way to markup certain text
-nodes.
+This XCode 6 project implements a library to create XML in Apple's Swift. It is
+currently in alpha status, meaning the implementation and interfaces may be
+subject to change. It supports the full XML standard except for standalone
+document type declarations and entity definitions. There is no CDATA
+representation, because that is just an easier way to markup certain text nodes.
 
 
 ## Example

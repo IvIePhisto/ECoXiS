@@ -13,7 +13,7 @@ protocol XMLNode {
 protocol XMLMiscNode: XMLNode {}
 
 
-@assignment func += (inout left: XMLNode[], right: XMLMiscNode[]) {
+@assignment func += (inout left: [XMLNode], right: [XMLMiscNode]) {
     for node in right {
         left.append(node)
     }
@@ -37,8 +37,8 @@ class XMLAttributes: Sequence {
 
     var count: Int { return _count() }
 
-    init(attributes: Dictionary<String, String> = [:]) { // making "attributes" unnamed yields compiler error
-        var attrs = Dictionary<String, String>()
+    init(attributes: [String: String] = [:]) { // making "attributes" unnamed yields compiler error
+        var attrs = [String: String]()
         _get = { attrs[$0] }
         set = {
             var maybeName = XMLUtilities.enforceName($0)
@@ -63,7 +63,7 @@ class XMLAttributes: Sequence {
         update(attributes)
     }
 
-    func update(attributes: Dictionary<String, String>) {
+    func update(attributes: [String: String]) {
         for (name, value) in attributes {
             set(name, value)
         }
@@ -111,10 +111,10 @@ class XMLElement: XMLNode {
         set { setName(newValue) }
     }
     let attributes: XMLAttributes
-    var children: XMLNode[]
+    var children: [XMLNode]
 
-    init(_ name: String, attributes: Dictionary<String, String> = [:],
-            children: XMLNode[] = []) {
+    init(_ name: String, attributes: [String: String] = [:],
+            children: [XMLNode] = []) {
         var elementName:String? = nil
         getName = { elementName }
         setName = {
@@ -164,7 +164,7 @@ class XMLElement: XMLNode {
         }
     }
 
-    class func createChildrenString(children: XMLNode[]) -> String {
+    class func createChildrenString(children: [XMLNode]) -> String {
         var childrenString = ""
 
         for child in children {
@@ -262,14 +262,14 @@ class XMLDocumentTypeDeclaration {
 class XMLDocument: Sequence {
     var omitXMLDeclaration: Bool
     var doctype: XMLDocumentTypeDeclaration?
-    var beforeElement: XMLMiscNode[]
+    var beforeElement: [XMLMiscNode]
     var element: XMLElement
-    var afterElement: XMLMiscNode[]
+    var afterElement: [XMLMiscNode]
     var count: Int { return beforeElement.count + 1 + afterElement.count }
 
 
-    init(_ element: XMLElement, beforeElement: XMLMiscNode[] = [],
-            afterElement: XMLMiscNode[] = [],
+    init(_ element: XMLElement, beforeElement: [XMLMiscNode] = [],
+            afterElement: [XMLMiscNode] = [],
             omitXMLDeclaration:Bool = false,
             doctype: XMLDocumentTypeDeclaration? = nil) {
         self.beforeElement = beforeElement
@@ -279,13 +279,13 @@ class XMLDocument: Sequence {
         self.doctype = doctype
     }
 
-    func generate() -> IndexingGenerator<Array<XMLNode>> {
-        var nodes = XMLNode[]()
+    func generate() -> GeneratorOf<XMLNode> {
+        var nodes = [XMLNode]()
         nodes += beforeElement
         nodes += element
         nodes += afterElement
 
-        return nodes.generate()
+        return GeneratorOf(nodes.generate())
     }
 
     class func createString(#omitXMLDeclaration: Bool,

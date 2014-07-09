@@ -28,12 +28,12 @@ func pi(target: String, _ value: String? = nil) -> String {
 }
 
 
-func el(name: String, _ attributes: Dictionary<String, String> = [:],
+func el(name: String, _ attributes: [String: String] = [:],
         _ children: String = "") -> String {
     let maybeName = XMLUtilities.enforceName(name)
 
     if let n = maybeName {
-        var preparedAttributes = Dictionary<String, String>()
+        var preparedAttributes = [String: String]()
 
         for (name, value) in attributes {
             if let n = XMLUtilities.enforceName(name) {
@@ -55,7 +55,7 @@ func el(name: String, children: String) -> String {
 }
 
 
-func xml(name: String, _ attributes: Dictionary<String, String> = [:],
+func xml(name: String, _ attributes: [String: String] = [:],
             _ children: String = "", omitXMLDeclaration:Bool = false,
             encoding: String? = nil,
             doctype: XMLDocumentTypeDeclaration? = nil,

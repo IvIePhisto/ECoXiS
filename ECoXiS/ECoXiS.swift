@@ -17,7 +17,7 @@ operator prefix < {}
 }
 
 
-@infix func | (element: XMLElement, attributes: Dictionary<String, String>)
+@infix func | (element: XMLElement, attributes: [String: String])
         -> XMLElement {
     for (name, value) in attributes {
         element[name] = value
@@ -26,7 +26,7 @@ operator prefix < {}
 }
 
 
-@infix func | (element: XMLElement, nodes: XMLNode[])
+@infix func | (element: XMLElement, nodes: [XMLNode])
         -> XMLElement {
     element.children += nodes
     return element

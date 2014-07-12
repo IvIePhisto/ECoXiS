@@ -37,7 +37,8 @@ class XMLAttributes: Sequence {
 
     var count: Int { return _count() }
 
-    init(attributes: [String: String] = [:]) { // making "attributes" unnamed yields compiler error
+    // BUG: making "attributes" unnamed yields compiler error
+    init(attributes: [String: String] = [:]) {
         var attrs = [String: String]()
         _get = { attrs[$0] }
         set = {
@@ -329,7 +330,14 @@ class XMLDocument: Sequence {
         var childrenString = ""
 
         for child in self {
+            /* BUG:
             childrenString += child.toString()
+             * CAUSES:
+             * malloc: *** error for object 0x???: incorrect checksum for freed object - object was probably modified after being freed.
+             * FIX: */
+            let childString = child.toString()
+            childrenString += childString
+            // END FIX
         }
 
         return XMLDocument.createString(omitXMLDeclaration: omitXMLDeclaration,

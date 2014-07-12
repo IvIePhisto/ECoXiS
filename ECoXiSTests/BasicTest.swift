@@ -129,17 +129,18 @@ class BasicTest: XCTestCase {
         // Model:
         var document = XML(<"FooBar", beforeElement: [<!"before"],
             afterElement: [PI("after")], doctype: Doctype())
-        /* Causes error in XCode 6 Beta 3:
         XCTAssert(document.toString() == documentString)
-         * malloc: *** error for object 0x???: incorrect checksum for freed object - object was probably modified after being freed.
-         */
         document.element.name = nil
         XCTAssert(document.toString().isEmpty)
         document.element.name = "test"
         document.omitXMLDeclaration = true
         document.doctype = nil
         document.beforeElement = []
-        document.afterElement = []
+        // BUG:
+        document.afterElement.removeAll()
+        /* CAUSES:
+         * malloc: *** error for object 0x10014b828: incorrect checksum for freed object - object was probably modified after being freed.
+         */
         XCTAssert(document.toString() == "<test/>")
         // Text:
         XCTAssert(xml("FooBar", doctype: Doctype(), beforeElement: !"before",

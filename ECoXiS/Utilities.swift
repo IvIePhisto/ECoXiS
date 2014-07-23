@@ -160,8 +160,17 @@ class XMLUtilities {
     class func enforceProcessingInstructionTarget(target: String?) -> String? {
         if let t = target {
             if let t = enforceName(t) {
-                if t.lowercaseString == "xml" {
-                    return nil
+                if countElements(t) == 3 {
+                    check: for (index, character) in enumerate(t) {
+                        switch (index, character) {
+                        case (0, "x"), (0, "X"), (1, "m"), (1, "M"):
+                            break
+                        case (2, "l"), (2, "L"):
+                            return nil
+                        default:
+                            break check
+                        }
+                    }
                 }
 
                 return t

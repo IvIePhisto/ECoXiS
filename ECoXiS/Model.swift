@@ -1,82 +1,75 @@
-enum XMLNodeType {
+public enum XMLNodeType {
     case Document, Element, Text, Comment, ProcessingInstruction
 }
 
 
-protocol XMLNode {
+public protocol XMLNode {
     var nodeType: XMLNodeType { get }
 
     func toString() -> String
 }
 
 
-protocol XMLMiscNode: XMLNode {}
+public protocol XMLMiscNode: XMLNode {}
 
 
-@assignment func += (inout left: [XMLNode], right: [XMLMiscNode]) {
+@assignment public func += (inout left: [XMLNode], right: [XMLMiscNode]) {
     for node in right {
         left.append(node)
     }
 }
 
-@infix func ==(left: String, right: XMLText) -> Bool {
+@infix public func ==(left: String, right: XMLText) -> Bool {
     return left == right.content
 }
 
-@infix func ==(left: XMLText, right: String) -> Bool {
+@infix public func ==(left: XMLText, right: String) -> Bool {
     return left.content == right
 }
 
+public enum XMLNameSettingResult {
+    case InvalidName, ModifiedName, ValidName
+}
 
-class XMLAttributes: Sequence {
-    let _get: String -> String?
-    let set: (String, String?) -> Bool?
-    let contains: String -> Bool
-    let _count: () -> Int
-    let _generate: () -> DictionaryGenerator<String, String>
 
-    var count: Int { return _count() }
+public class XMLAttributes: Sequence {
+    private var _attributes = [String: String]()
 
-    // BUG: making "attributes" unnamed yields compiler error
+    public var count: Int { return _attributes.count }
+
+    //BUG: making "attributes" unnamed yields compiler error
     init(attributes: [String: String] = [:]) {
-        var attrs = [String: String]()
-        _get = { attrs[$0] }
-        set = {
-            var maybeName = XMLUtilities.enforceName($0)
-
-            if let name = maybeName {
-                if !name.isEmpty {
-                    if let value = $1 {
-                        attrs[name] = $1
-                        return true
-                    } else {
-                        attrs[name] = nil
-                        return false
-                    }
-                }
-            }
-
-            return nil
-        }
-        contains = { attrs[$0] != nil }
-        _count = { attrs.count }
-        _generate = { attrs.generate() }
         update(attributes)
     }
 
-    func update(attributes: [String: String]) {
+    public func set(name: String, _ value: String?) -> XMLNameSettingResult {
+        if let _name = XMLUtilities.enforceName(name) {
+            if !_name.isEmpty {
+                _attributes[name] = value
+                return _name == name ? .ValidName : .ModifiedName
+            }
+        }
+
+        return .InvalidName
+    }
+
+    public func contains(name: String) -> Bool {
+        return _attributes[name] != nil
+    }
+
+    public func update(attributes: [String: String]) {
         for (name, value) in attributes {
             set(name, value)
         }
     }
 
-    func generate() -> DictionaryGenerator<String, String> {
-        return _generate()
+    public func generate() -> GeneratorOf<(String, String)> {
+        return GeneratorOf(_attributes.generate())
     }
 
-    subscript(name: String) -> String? {
+    public subscript(name: String) -> String? {
         get {
-            return _get(name)
+            return _attributes[name]
         }
 
         set {
@@ -85,7 +78,7 @@ class XMLAttributes: Sequence {
     }
 
     class func createString(var attributeGenerator:
-            DictionaryGenerator<String, String>) -> String {
+            GeneratorOf<(String, String)>) -> String {
         var result = ""
 
         while let (name, value) = attributeGenerator.next() {
@@ -97,41 +90,38 @@ class XMLAttributes: Sequence {
     }
 
     func toString() -> String {
-        return XMLAttributes.createString(self._generate())
+        return XMLAttributes.createString(self.generate())
     }
 }
 
 
-class XMLElement: XMLNode {
-    let nodeType = XMLNodeType.Element
+public class XMLElement: XMLNode {
+    public let nodeType = XMLNodeType.Element
 
-    let getName: () -> String?
-    let setName: String? -> ()
-    var name: String? {
-        get { return getName() }
-        set { setName(newValue) }
-    }
-    let attributes: XMLAttributes
-    var children: [XMLNode]
-
-    init(_ name: String, attributes: [String: String] = [:],
-            children: [XMLNode] = []) {
-        var elementName:String? = nil
-        getName = { elementName }
-        setName = {
-            if let name = $0 {
-                elementName = XMLUtilities.enforceName(name)
+    private var _name: String?
+    public var name: String? {
+        get { return _name }
+        set {
+            if let name = newValue {
+                _name = XMLUtilities.enforceName(name)
             }
             else {
-                elementName = nil
+                _name = nil
             }
         }
+    }
+
+    public let attributes: XMLAttributes
+    public var children: [XMLNode]
+
+    public init(_ name: String, attributes: [String: String] = [:],
+            children: [XMLNode] = []) {
         self.attributes = XMLAttributes(attributes: attributes)
         self.children = children
         self.name = name
     }
 
-    subscript(name: String) -> String? {
+    public subscript(name: String) -> String? {
         get {
             return attributes[name]
         }
@@ -141,7 +131,7 @@ class XMLElement: XMLNode {
         }
     }
 
-    subscript(index: Int) -> XMLNode? {
+    public subscript(index: Int) -> XMLNode? {
         get {
             if index < children.count {
                 return children[index]
@@ -189,7 +179,7 @@ class XMLElement: XMLNode {
         return result
     }
 
-    func toString() -> String {
+    public func toString() -> String {
         if let n = name {
             return XMLElement.createString(n,
                 attributesString: attributes.toString(),
@@ -201,39 +191,32 @@ class XMLElement: XMLNode {
 }
 
 
-class XMLDocumentTypeDeclaration {
-    let _getSystemID: () -> String?
-    let _setSystemID: String? -> ()
-    let _getPublicID: () -> String?
-    let _setPublicID: String? -> ()
-    let _getUseQuotForSystemID: () -> Bool
+public class XMLDocumentTypeDeclaration {
+    private var _systemID: String?
+    private var _publicID: String?
+    private var _useQuotForSystemID = false
 
-    var useQuotForSystemID: Bool { return _getUseQuotForSystemID() }
-    var systemID: String? {
-        get { return _getSystemID() }
-        set { _setSystemID(newValue) }
-    }
-    var publicID: String? {
-        get { return _getPublicID() }
-        set { _setPublicID(newValue) }
-    }
-
-    init(publicID: String? = nil, systemID: String? = nil) {
-        var pubID: String?
-        _getPublicID = { pubID }
-        _setPublicID = { pubID = XMLUtilities.enforceDoctypePublicID($0) }
-        var sysID: String?
-        var useQuot: Bool = true
-        _getSystemID = { sysID }
-        _setSystemID = {
-            (useQuot, sysID) = XMLUtilities.enforceDoctypeSystemID($0)
+    public var useQuotForSystemID: Bool { return _useQuotForSystemID }
+    public var systemID: String? {
+        get { return _systemID }
+        set {
+            (_useQuotForSystemID, _systemID) =
+                XMLUtilities.enforceDoctypeSystemID(newValue)
         }
-        _getUseQuotForSystemID = { useQuot }
+    }
+    public var publicID: String? {
+        get { return _publicID }
+        set {
+            _publicID = XMLUtilities.enforceDoctypePublicID(newValue)
+        }
+    }
+
+    public init(publicID: String? = nil, systemID: String? = nil) {
         self.publicID = publicID
         self.systemID = systemID
     }
 
-    func toString(name: String) -> String {
+    public func toString(name: String) -> String {
         var result = "<!DOCTYPE \(name)"
 
         if let sID = systemID {
@@ -260,16 +243,16 @@ class XMLDocumentTypeDeclaration {
 }
 
 
-class XMLDocument: Sequence {
-    var omitXMLDeclaration: Bool
-    var doctype: XMLDocumentTypeDeclaration?
-    var beforeElement: [XMLMiscNode]
-    var element: XMLElement
-    var afterElement: [XMLMiscNode]
-    var count: Int { return beforeElement.count + 1 + afterElement.count }
+public class XMLDocument: Sequence {
+    public var omitXMLDeclaration: Bool
+    public var doctype: XMLDocumentTypeDeclaration?
+    public var beforeElement: [XMLMiscNode]
+    public var element: XMLElement
+    public var afterElement: [XMLMiscNode]
+    public var count: Int { return beforeElement.count + 1 + afterElement.count }
 
 
-    init(_ element: XMLElement, beforeElement: [XMLMiscNode] = [],
+    public init(_ element: XMLElement, beforeElement: [XMLMiscNode] = [],
             afterElement: [XMLMiscNode] = [],
             omitXMLDeclaration:Bool = false,
             doctype: XMLDocumentTypeDeclaration? = nil) {
@@ -280,7 +263,7 @@ class XMLDocument: Sequence {
         self.doctype = doctype
     }
 
-    func generate() -> GeneratorOf<XMLNode> {
+    public func generate() -> GeneratorOf<XMLNode> {
         var nodes = [XMLNode]()
         nodes += beforeElement
         nodes += element
@@ -314,7 +297,7 @@ class XMLDocument: Sequence {
         return result
     }
 
-    func toString(encoding: String? = nil) -> String {
+    public func toString(encoding: String? = nil) -> String {
         if element.name == nil {
             return ""
         }
@@ -347,20 +330,11 @@ class XMLDocument: Sequence {
 }
 
 
-class XMLText: XMLNode {
-    let nodeType = XMLNodeType.Text
+public class XMLText: XMLNode {
+    public let nodeType = XMLNodeType.Text
+    public var content: String
 
-    let _getContent: () -> String
-    let _setContent: String -> ()
-    var content: String {
-        get { return _getContent() }
-        set { _setContent(newValue) }
-    }
-
-    init(_ content: String) {
-        var c = ""
-        _getContent = { c }
-        _setContent = { c = $0 }
+    public init(_ content: String) {
         self.content = content
     }
 
@@ -368,26 +342,22 @@ class XMLText: XMLNode {
         return XMLUtilities.escape(content)
     }
 
-    func toString() -> String {
+    public func toString() -> String {
         return XMLText.createString(content)
     }
 }
 
 
-class XMLComment: XMLMiscNode {
-    let nodeType = XMLNodeType.Comment
+public class XMLComment: XMLMiscNode {
+    public let nodeType = XMLNodeType.Comment
 
-    let _getContent: () -> String?
-    let _setContent: String? -> ()
-    var content: String? {
-        get { return _getContent() }
-        set { _setContent(newValue) }
+    private var _content: String?
+    public var content: String? {
+        get { return _content }
+        set { _content = XMLUtilities.enforceCommentContent(newValue) }
     }
 
-    init(_ content: String) {
-        var c:String?
-        _getContent = { c }
-        _setContent = { c = XMLUtilities.enforceCommentContent($0) }
+    public init(_ content: String) {
         self.content = content
     }
 
@@ -395,7 +365,7 @@ class XMLComment: XMLMiscNode {
         return "<!--\(content)-->"
     }
 
-    func toString() -> String {
+    public func toString() -> String {
         if let c = content {
             return XMLComment.createString(c)
         }
@@ -405,32 +375,26 @@ class XMLComment: XMLMiscNode {
 }
 
 
-class XMLProcessingInstruction: XMLMiscNode {
-    let nodeType = XMLNodeType.ProcessingInstruction
+public class XMLProcessingInstruction: XMLMiscNode {
+    public let nodeType = XMLNodeType.ProcessingInstruction
 
-    let _getTarget: () -> String?
-    let _setTarget: String? -> ()
-    var target: String? {
-        get { return _getTarget() }
-        set { _setTarget(newValue) }
-    }
-
-    let _getValue: () -> String?
-    let _setValue: String? -> ()
-    var value: String? {
-        get { return _getValue() }
-        set { _setValue(newValue) }
-    }
-
-    init(_ target: String, _ value: String? = nil) {
-        var t:String? = nil
-        _getTarget = { t }
-        _setTarget = {
-            t = XMLUtilities.enforceProcessingInstructionTarget($0)
+    private var _target: String?
+    public var target: String? {
+        get { return _target }
+        set {
+            _target = XMLUtilities.enforceProcessingInstructionTarget(newValue)
         }
-        var v:String? = nil
-        _getValue = { v }
-        _setValue = { v = XMLUtilities.enforceProcessingInstructionValue($0) }
+    }
+
+    private var _value: String?
+    public var value: String? {
+        get { return _value }
+        set {
+            _value = XMLUtilities.enforceProcessingInstructionValue(newValue)
+        }
+    }
+
+    public init(_ target: String, _ value: String? = nil) {
         self.target = target
         self.value = value
     }
@@ -447,7 +411,7 @@ class XMLProcessingInstruction: XMLMiscNode {
         return result
     }
 
-    func toString() -> String {
+    public func toString() -> String {
         if let t = target {
             return XMLProcessingInstruction.createString(t, value: value)
         }

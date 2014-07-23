@@ -1,23 +1,23 @@
-operator prefix <& {}
+public operator prefix <& {}
 
-@prefix func <& (content: String) -> XMLText {
+@prefix public func <& (content: String) -> XMLText {
     return XMLText(content)
 }
 
-operator prefix <! {}
+public operator prefix <! {}
 
-@prefix func <! (content: String) -> XMLComment {
+@prefix public func <! (content: String) -> XMLComment {
     return XMLComment(content)
 }
 
-operator prefix < {}
+public operator prefix < {}
 
-@prefix func < (name: String) -> XMLElement {
+@prefix public func < (name: String) -> XMLElement {
     return XMLElement(name)
 }
 
 
-@infix func | (element: XMLElement, attributes: [String: String])
+@infix public func | (element: XMLElement, attributes: [String: String])
         -> XMLElement {
     for (name, value) in attributes {
         element[name] = value
@@ -26,19 +26,19 @@ operator prefix < {}
 }
 
 
-@infix func | (element: XMLElement, nodes: [XMLNode])
+@infix public func | (element: XMLElement, nodes: [XMLNode])
         -> XMLElement {
     element.children += nodes
     return element
 }
 
-@infix func | (element: XMLElement, node: XMLNode)
+@infix public func | (element: XMLElement, node: XMLNode)
         -> XMLElement {
     element.children += node
     return element
 }
 
 
-typealias PI = XMLProcessingInstruction
-typealias Doctype = XMLDocumentTypeDeclaration
-typealias XML = XMLDocument
+public typealias PI = XMLProcessingInstruction
+public typealias Doctype = XMLDocumentTypeDeclaration
+public typealias XML = XMLDocument

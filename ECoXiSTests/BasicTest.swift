@@ -136,12 +136,8 @@ class BasicTest: XCTestCase {
         document.omitXMLDeclaration = true
         document.doctype = nil
         document.beforeElement = []
-        // BUG:
         document.afterElement.removeAll()
         XCTAssert(document.toString() == "<test/>")
-        /* CAUSES:
-         * malloc: *** error for object 0x10014b828: incorrect checksum for freed object - object was probably modified after being freed.
-         */
         // Text:
         XCTAssert(xml("FooBar", doctype: Doctype(), beforeElement: !"before",
             afterElement: pi("after")) == documentString)

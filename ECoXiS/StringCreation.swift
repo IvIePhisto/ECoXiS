@@ -1,11 +1,11 @@
-operator postfix & {} // not possible to use '&' as prefix operator
+public operator postfix & {} // not possible to use '&' as prefix operator
 
-@postfix func & (content: String) -> String {
+@postfix public func & (content: String) -> String {
     return XMLUtilities.escape(content)
 }
 
 
-@prefix func ! (content: String) -> String {
+@prefix public func ! (content: String) -> String {
     let maybeContent = XMLUtilities.enforceCommentContent(content)
     
     if let c = maybeContent {
@@ -16,7 +16,7 @@ operator postfix & {} // not possible to use '&' as prefix operator
 }
 
 
-func pi(target: String, _ value: String? = nil) -> String {
+public func pi(target: String, _ value: String? = nil) -> String {
     let maybeTarget = XMLUtilities.enforceProcessingInstructionTarget(target)
 
     if let t = maybeTarget {
@@ -28,7 +28,7 @@ func pi(target: String, _ value: String? = nil) -> String {
 }
 
 
-func el(name: String, _ attributes: [String: String] = [:],
+public func el(name: String, _ attributes: [String: String] = [:],
         _ children: String = "") -> String {
     let maybeName = XMLUtilities.enforceName(name)
 
@@ -41,7 +41,7 @@ func el(name: String, _ attributes: [String: String] = [:],
             }
         }
 
-        let a = XMLAttributes.createString(preparedAttributes.generate())
+        let a = XMLAttributes.createString(GeneratorOf(preparedAttributes.generate()))
         return XMLElement.createString(n, attributesString: a,
             childrenString: children)
     }
@@ -50,12 +50,12 @@ func el(name: String, _ attributes: [String: String] = [:],
 }
 
 
-func el(name: String, children: String) -> String {
+public func el(name: String, children: String) -> String {
     return el(name, [:], children)
 }
 
 
-func xml(name: String, _ attributes: [String: String] = [:],
+public func xml(name: String, _ attributes: [String: String] = [:],
             _ children: String = "", omitXMLDeclaration:Bool = false,
             encoding: String? = nil,
             doctype: XMLDocumentTypeDeclaration? = nil,
@@ -73,7 +73,7 @@ func xml(name: String, _ attributes: [String: String] = [:],
 }
 
 
-func xml(name: String, children: String, omitXMLDeclaration:Bool = false,
+public func xml(name: String, children: String, omitXMLDeclaration:Bool = false,
             encoding: String? = nil,
             doctype: XMLDocumentTypeDeclaration? = nil,
             beforeElement: String = "", afterElement: String = "") -> String {

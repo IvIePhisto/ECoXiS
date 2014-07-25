@@ -30,12 +30,12 @@ class BasicTest: XCTestCase {
         var processingInstruction = PI(target, value)
         XCTAssert(processingInstruction.target == "foo")
         XCTAssert(processingInstruction.value == "bar?")
-        XCTAssert(processingInstruction.toString() == piString)
+        XCTAssert(processingInstruction.description == piString)
         processingInstruction.value = nil
-        XCTAssert(processingInstruction.toString() == emptyPIString)
+        XCTAssert(processingInstruction.description == emptyPIString)
         processingInstruction.target = invalidTarget
         XCTAssert(processingInstruction.target == nil)
-        XCTAssert(processingInstruction.toString().isEmpty)
+        XCTAssert(processingInstruction.description.isEmpty)
         // Text:
         XCTAssert(pi(target, value) == piString)
         XCTAssert(pi(target) == emptyPIString)
@@ -49,10 +49,10 @@ class BasicTest: XCTestCase {
         // Model:
         var comment = <!content
         XCTAssert(comment.content == "Foo-Bar")
-        XCTAssert(comment.toString() == commentString)
+        XCTAssert(comment.description == commentString)
         comment.content = invalidContent
         XCTAssert(comment.content == nil)
-        XCTAssert(comment.toString() == "")
+        XCTAssert(comment.description == "")
         // Text:
         XCTAssert(!content == commentString)
         XCTAssert(!invalidContent == "")
@@ -65,7 +65,7 @@ class BasicTest: XCTestCase {
         let text = <&content
         XCTAssert(text == content)
         XCTAssert(content == text)
-        XCTAssert(text.toString() == contentString)
+        XCTAssert(text.description == contentString)
         // Text:
         XCTAssert(content& == contentString)
     }
@@ -92,12 +92,12 @@ class BasicTest: XCTestCase {
         element["bar"] = nil
         XCTAssert(element.attributes.count == 1)
         XCTAssert(!element.attributes.contains("bar"))
-        XCTAssert(element.toString() == elementString)
+        XCTAssert(element.description == elementString)
         element[0] = nil
         element[0] = nil
         element[0] = nil
         element["foo"] = nil
-        XCTAssert(element.toString() == "<FooBar/>")
+        XCTAssert(element.description == "<FooBar/>")
         // Text:
         XCTAssert(el("1Foo/Bar?", ["foo": fooValue], text& + pi("foo", "bar")
             + !"--foo--bar--") == elementString)

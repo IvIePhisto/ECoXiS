@@ -3,10 +3,8 @@ public enum XMLNodeType {
 }
 
 
-public protocol XMLNode {
+public protocol XMLNode: Printable {
     var nodeType: XMLNodeType { get }
-
-    func toString() -> String
 }
 
 
@@ -114,6 +112,16 @@ public class XMLElement: XMLNode {
     public let attributes: XMLAttributes
     public var children: [XMLNode]
 
+    public var description:String {
+        if let n = name {
+            return XMLElement.createString(n,
+                attributesString: attributes.toString(),
+                childrenString: XMLElement.createChildrenString(children))
+        }
+
+        return ""
+    }
+
     public init(_ name: String, attributes: [String: String] = [:],
             children: [XMLNode] = []) {
         self.attributes = XMLAttributes(attributes: attributes)
@@ -159,7 +167,7 @@ public class XMLElement: XMLNode {
         var childrenString = ""
 
         for child in children {
-            childrenString += child.toString()
+            childrenString += child.description
         }
 
         return childrenString
@@ -177,16 +185,6 @@ public class XMLElement: XMLNode {
         }
 
         return result
-    }
-
-    public func toString() -> String {
-        if let n = name {
-            return XMLElement.createString(n,
-                attributesString: attributes.toString(),
-                childrenString: XMLElement.createChildrenString(children))
-        }
-
-        return ""
     }
 }
 
@@ -313,14 +311,7 @@ public class XMLDocument: Sequence {
         var childrenString = ""
 
         for child in self {
-            /* BUG:
-            childrenString += child.toString()
-             * CAUSES:
-             * malloc: *** error for object 0x???: incorrect checksum for freed object - object was probably modified after being freed.
-             * FIX: */
-            let childString = child.toString()
-            childrenString += childString
-            // END FIX
+            childrenString += child.description
         }
 
         return XMLDocument.createString(omitXMLDeclaration: omitXMLDeclaration,
@@ -334,16 +325,16 @@ public class XMLText: XMLNode {
     public let nodeType = XMLNodeType.Text
     public var content: String
 
+    public var description: String {
+        return XMLText.createString(content)
+    }
+
     public init(_ content: String) {
         self.content = content
     }
 
     class func createString(content: String) -> String {
         return XMLUtilities.escape(content)
-    }
-
-    public func toString() -> String {
-        return XMLText.createString(content)
     }
 }
 
@@ -357,20 +348,20 @@ public class XMLComment: XMLMiscNode {
         set { _content = XMLUtilities.enforceCommentContent(newValue) }
     }
 
+    public var description: String {
+        if let c = content {
+            return XMLComment.createString(c)
+        }
+
+        return ""
+    }
+
     public init(_ content: String) {
         self.content = content
     }
 
     class func createString(content: String) -> String {
         return "<!--\(content)-->"
-    }
-
-    public func toString() -> String {
-        if let c = content {
-            return XMLComment.createString(c)
-        }
-
-        return ""
     }
 }
 
@@ -394,6 +385,15 @@ public class XMLProcessingInstruction: XMLMiscNode {
         }
     }
 
+
+    public var description: String {
+        if let t = target {
+            return XMLProcessingInstruction.createString(t, value: value)
+        }
+
+        return ""
+    }
+
     public init(_ target: String, _ value: String? = nil) {
         self.target = target
         self.value = value
@@ -409,14 +409,6 @@ public class XMLProcessingInstruction: XMLMiscNode {
 
         result += "?>"
         return result
-    }
-
-    public func toString() -> String {
-        if let t = target {
-            return XMLProcessingInstruction.createString(t, value: value)
-        }
-
-        return ""
     }
 }
 

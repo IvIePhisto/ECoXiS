@@ -1,5 +1,7 @@
+// TODO: add deep copying
+
 public enum XMLNodeType {
-    case Document, Element, Text, Comment, ProcessingInstruction
+    case Element, Text, Comment, ProcessingInstruction
 }
 
 
@@ -7,8 +9,66 @@ public protocol XMLNode: Printable {
     var nodeType: XMLNodeType { get }
 }
 
+public func == (left: XMLNode, right: XMLNode) -> Bool {
+    if left.nodeType != right.nodeType {
+        return false
+    }
+
+    switch left.nodeType {
+    case .Element:
+        return left as XMLElement != right as XMLElement
+    case .Text:
+        return left as XMLText != right as XMLText
+    case .Comment:
+        return left as XMLComment != right as XMLComment
+    case .ProcessingInstruction:
+        return left as XMLProcessingInstruction
+                != right as XMLProcessingInstruction
+    }
+}
+
+public func != (left: XMLNode, right: XMLNode) -> Bool {
+    return !(left == right)
+}
+
+public func == (left: [XMLNode], right: [XMLNode]) -> Bool {
+    if left.count != right.count {
+        return false
+    }
+
+    for (leftNode, rightNode) in Zip2(left, right) {
+        if leftNode != rightNode {
+            return false
+        }
+    }
+
+    return true
+}
+
 
 public protocol XMLMiscNode: XMLNode {}
+
+public func == (left: XMLMiscNode, right: XMLMiscNode) -> Bool {
+    return left as XMLNode == right as XMLNode
+}
+
+public func != (left: XMLMiscNode, right: XMLMiscNode) -> Bool {
+    return left as XMLNode != right as XMLNode
+}
+
+public func == (left: [XMLMiscNode], right: [XMLMiscNode]) -> Bool {
+    if left.count != right.count {
+        return false
+    }
+
+    for (leftNode, rightNode) in Zip2(left, right) {
+        if leftNode != rightNode {
+            return false
+        }
+    }
+
+    return true
+}
 
 
 @assignment public func += (inout left: [XMLNode], right: [XMLMiscNode]) {
@@ -30,12 +90,12 @@ public enum XMLNameSettingResult {
 }
 
 
-public class XMLAttributes: Sequence {
+public class XMLAttributes: Sequence, Equatable {
     private var _attributes = [String: String]()
 
     public var count: Int { return _attributes.count }
 
-    //BUG: making "attributes" unnamed yields compiler error
+    // MARK: BUG: making "attributes" unnamed yields compiler error
     init(attributes: [String: String] = [:]) {
         update(attributes)
     }
@@ -90,10 +150,18 @@ public class XMLAttributes: Sequence {
     func toString() -> String {
         return XMLAttributes.createString(self.generate())
     }
+
+    func equals(other: XMLAttributes) -> Bool {
+        return self._attributes == other._attributes
+    }
+}
+
+public func == (left: XMLAttributes, right: XMLAttributes) -> Bool {
+    return left.equals(right)
 }
 
 
-public class XMLElement: XMLNode {
+public class XMLElement: XMLNode, Equatable {
     public let nodeType = XMLNodeType.Element
 
     private var _name: String?
@@ -188,8 +256,16 @@ public class XMLElement: XMLNode {
     }
 }
 
+public func == (left: XMLElement, right: XMLElement) -> Bool {
+        if left.name != right.name || left.attributes != right.attributes {
+            return false
+        }
 
-public class XMLDocumentTypeDeclaration {
+        return left.children == right.children
+}
+
+
+public class XMLDocumentTypeDeclaration: Equatable {
     private var _systemID: String?
     private var _publicID: String?
     private var _useQuotForSystemID = false
@@ -240,15 +316,21 @@ public class XMLDocumentTypeDeclaration {
     }
 }
 
+public func == (left: XMLDocumentTypeDeclaration,
+        right: XMLDocumentTypeDeclaration) -> Bool {
+    return left.publicID == right.publicID && left.systemID == right.systemID
+}
 
-public class XMLDocument: Sequence {
+
+public class XMLDocument: Sequence, Equatable {
     public var omitXMLDeclaration: Bool
     public var doctype: XMLDocumentTypeDeclaration?
     public var beforeElement: [XMLMiscNode]
     public var element: XMLElement
     public var afterElement: [XMLMiscNode]
-    public var count: Int { return beforeElement.count + 1 + afterElement.count }
-
+    public var count: Int {
+        return beforeElement.count + 1 + afterElement.count
+    }
 
     public init(_ element: XMLElement, beforeElement: [XMLMiscNode] = [],
             afterElement: [XMLMiscNode] = [],
@@ -320,8 +402,16 @@ public class XMLDocument: Sequence {
     }
 }
 
+public func == (left: XMLDocument, right: XMLDocument) -> Bool {
+    return left.omitXMLDeclaration == right.omitXMLDeclaration
+        && left.doctype == right.doctype
+        && left.beforeElement == right.beforeElement
+        && left.element == right.element
+        && left.afterElement == right.afterElement
+}
 
-public class XMLText: XMLNode {
+
+public class XMLText: XMLNode, Equatable {
     public let nodeType = XMLNodeType.Text
     public var content: String
 
@@ -338,8 +428,12 @@ public class XMLText: XMLNode {
     }
 }
 
+public func == (left: XMLText, right: XMLText) -> Bool {
+    return left.content == right.content
+}
 
-public class XMLComment: XMLMiscNode {
+
+public class XMLComment: XMLMiscNode, Equatable {
     public let nodeType = XMLNodeType.Comment
 
     private var _content: String?
@@ -365,8 +459,12 @@ public class XMLComment: XMLMiscNode {
     }
 }
 
+public func == (left: XMLComment, right: XMLComment) -> Bool {
+    return left.content == right.content
+}
 
-public class XMLProcessingInstruction: XMLMiscNode {
+
+public class XMLProcessingInstruction: XMLMiscNode, Equatable {
     public let nodeType = XMLNodeType.ProcessingInstruction
 
     private var _target: String?
@@ -412,3 +510,7 @@ public class XMLProcessingInstruction: XMLMiscNode {
     }
 }
 
+public func == (left: XMLProcessingInstruction,
+        right: XMLProcessingInstruction) -> Bool {
+    return left.target == right.target && left.value == right.value
+}

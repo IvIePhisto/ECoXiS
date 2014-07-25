@@ -1,3 +1,5 @@
+// TODO: add equality tests
+
 import XCTest
 import ECoXiS
 
@@ -20,6 +22,7 @@ func template(title: String, message: String) -> XMLDocument {
 
 
 class BasicTest: XCTestCase {
+
     func testPI() {
         let target = "-fo o <"
         let invalidTarget = "<?-"

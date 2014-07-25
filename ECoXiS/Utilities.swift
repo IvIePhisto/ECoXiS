@@ -106,7 +106,7 @@ class XMLUtilities {
             var codePoint = unicodeScalar.value
 
             if check(codePoint) {
-                result += "\(unicodeScalar)"
+                result += unicodeScalar.description
                 resultCharacterCount++
             }
         }
@@ -256,7 +256,7 @@ class XMLUtilities {
                         CharacterScalars.Semicolon,
                         CharacterScalars.At,
                         CharacterScalars.Underscore:
-                    result += "\(unicodeScalar)"
+                    result += unicodeScalar.description
                 default:
                     if (CharacterScalars.A <= us && CharacterScalars.Z >= us)
                         || (CharacterScalars.a <= us
@@ -267,7 +267,7 @@ class XMLUtilities {
                                 && CharacterScalars.Slash >= us)
                         || (CharacterScalars.Hashbang <= us
                                 && CharacterScalars.Percent >= us) {
-                        result += "\(unicodeScalar)"
+                        result += unicodeScalar.description
                     }
                 }
             }

@@ -1,13 +1,13 @@
-public operator postfix & {} // not possible to use '&' as prefix operator
+postfix operator & {} // not possible to use '&' as prefix operator
 
-@postfix public func & (content: String) -> String {
+public postfix func & (content: String) -> String {
     return XMLUtilities.escape(content)
 }
 
 
-@prefix public func ! (content: String) -> String {
+prefix public func ! (content: String) -> String {
     let maybeContent = XMLUtilities.enforceCommentContent(content)
-    
+
     if let c = maybeContent {
         return XMLComment.createString(c)
     }

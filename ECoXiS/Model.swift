@@ -70,18 +70,17 @@ public func == (left: [XMLMiscNode], right: [XMLMiscNode]) -> Bool {
     return true
 }
 
-
-@assignment public func += (inout left: [XMLNode], right: [XMLMiscNode]) {
+public func += (inout left: [XMLNode], right: [XMLMiscNode]) {
     for node in right {
         left.append(node)
     }
 }
 
-@infix public func ==(left: String, right: XMLText) -> Bool {
+public func == (left: String, right: XMLText) -> Bool {
     return left == right.content
 }
 
-@infix public func ==(left: XMLText, right: String) -> Bool {
+public func == (left: XMLText, right: String) -> Bool {
     return left.content == right
 }
 
@@ -90,7 +89,7 @@ public enum XMLNameSettingResult {
 }
 
 
-public class XMLAttributes: Sequence, Equatable {
+public class XMLAttributes: SequenceType, Equatable {
     private var _attributes = [String: String]()
 
     public var count: Int { return _attributes.count }
@@ -322,7 +321,7 @@ public func == (left: XMLDocumentTypeDeclaration,
 }
 
 
-public class XMLDocument: Sequence, Equatable {
+public class XMLDocument: SequenceType, Equatable {
     public var omitXMLDeclaration: Bool
     public var doctype: XMLDocumentTypeDeclaration?
     public var beforeElement: [XMLMiscNode]
@@ -346,7 +345,7 @@ public class XMLDocument: Sequence, Equatable {
     public func generate() -> GeneratorOf<XMLNode> {
         var nodes = [XMLNode]()
         nodes += beforeElement
-        nodes += element
+        nodes.append(element)
         nodes += afterElement
 
         return GeneratorOf(nodes.generate())
@@ -381,7 +380,7 @@ public class XMLDocument: Sequence, Equatable {
         if element.name == nil {
             return ""
         }
-        
+
         var doctypeString: String?
 
         if let dt = doctype {
@@ -433,6 +432,13 @@ public func == (left: XMLText, right: XMLText) -> Bool {
 }
 
 
+/**
+Represents a XML comment node.
+
+Note that a value assigned to the property/initialization parameter `content` is
+stripped of invalid character combinations: a dash ("-") may not appear at
+the beginning or the end and in between only single dashes may appear.
+*/
 public class XMLComment: XMLMiscNode, Equatable {
     public let nodeType = XMLNodeType.Comment
 

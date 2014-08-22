@@ -7,11 +7,11 @@ import ECoXiS
 func template(title: String, message: String) -> XMLDocument {
     let titleTextNode = <&title
     return XML(
-        <"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"] | [
-            <"head" | [<"title" | titleTextNode],
-            <"body" | [
-                <"h1" | titleTextNode,
-                <"p!" | <&message,
+        </"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"] | [
+            </"head" | [</"title" | titleTextNode],
+            </"body" | [
+                </"h1" | titleTextNode,
+                </"p!" | <&message,
                 <!"This is a comment, multiple --- are collapsed!--",
                 PI("processing-instruction-target", "PI?> content")
             ]
@@ -80,7 +80,7 @@ class BasicTest: XCTestCase {
         let elementString = "<FooBar foo=\"&lt;foz'&quot;&gt;\">&lt;Hello World!/&gt;<?foo bar?><!--foo-bar--></FooBar>"
         let attributes = ["!foo": fooValue, "<bar/>": "boz"]
         // Model:
-        var element = <"<test/>" | attributes
+        var element = </"<test/>" | attributes
             | [<&text, PI("foo", "bar"), <!"--foo--bar--"]
         XCTAssert(element.name == "test")
         XCTAssert(element[0]! as XMLText == text)
@@ -130,7 +130,7 @@ class BasicTest: XCTestCase {
     func testDocument() {
         let documentString = "<?xml version=\"1.0\"?><!DOCTYPE FooBar><!--before--><FooBar/><?after?>"
         // Model:
-        var document = XML(<"FooBar", beforeElement: [<!"before"],
+        var document = XML(</"FooBar", beforeElement: [<!"before"],
             afterElement: [PI("after")], doctype: Doctype())
         XCTAssert(document.toString() == documentString)
         document.element.name = nil

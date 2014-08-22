@@ -45,32 +45,53 @@ class XMLUtilities {
             case ("\"", .EscapeQuot):
                 result += "&quot;"
             default:
-                result += character
+                result.append(character)
             }
         }
 
         return result
     }
 
+    class func isCodePointValid(codePoint: UInt32, valid: UInt32...) -> Bool {
+        for validCodePoint in valid {
+            if codePoint == validCodePoint {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    class func isCodePointInRanges(codePoint: UInt32,
+            ranges: (UInt32, UInt32)...) -> Bool {
+        for (lowerBound, upperBound) in ranges {
+            if lowerBound > codePoint || upperBound < codePoint {
+                return false
+            }
+        }
+
+        return true
+    }
+
     class func isNameStartCharacter(codePoint: UInt32) -> Bool {
-        return CharacterScalars.Colon == codePoint
-            || (CharacterScalars.A <= codePoint
-                    && CharacterScalars.Z >= codePoint)
-            || CharacterScalars.Underscore == codePoint
-            || (CharacterScalars.a <= codePoint
-                    && CharacterScalars.z >= codePoint)
-            || (0xC0 <= codePoint && 0xD6 >= codePoint)
-            || (0xD8 <= codePoint && 0xF6 >= codePoint)
-            || (0xF8 <= codePoint && 0x2FF >= codePoint)
-            || (0x370 <= codePoint && 0x37D >= codePoint)
-            || (0x37F <= codePoint && 0x1FFF >= codePoint)
-            || (0x200C <= codePoint && 0x200D >= codePoint)
-            || (0x2070 <= codePoint && 0x218F >= codePoint)
-            || (0x2C00 <= codePoint && 0x2FEF >= codePoint)
-            || (0x3001 <= codePoint && 0xD7FF >= codePoint)
-            || (0xF900 <= codePoint && 0xFDCF >= codePoint)
-            || (0xFDF0 <= codePoint && 0xFFFD >= codePoint)
-            || (0x10000 <= codePoint && 0xEFFFF >= codePoint)
+        return isCodePointValid(codePoint, valid:
+                    CharacterScalars.Colon,
+                    CharacterScalars.Underscore)
+            || isCodePointInRanges(codePoint, ranges:
+                (CharacterScalars.A, CharacterScalars.Z),
+                (CharacterScalars.a, CharacterScalars.z),
+                (0xC0, 0xD6),
+                (0xD8, 0xF6),
+                (0xF8, 0x2FF),
+                (0x370, 0x37D),
+                (0x37F, 0x1FFF),
+                (0x200C, 0x200D),
+                (0x2070, 0x218F),
+                (0x2C00, 0x2FEF),
+                (0x3001, 0xD7FF),
+                (0xF900, 0xFDCF),
+                (0xFDF0, 0xFFFD),
+                (0x10000, 0xEFFFF))
     }
 
     class func isNameCharacter(codePoint: UInt32) -> Bool {
@@ -139,7 +160,7 @@ class XMLUtilities {
                         result += "-"
                         appendMinus = false
                     }
-                    result += character
+                    result.append(character)
                     isFirst = false
                     lastWasMinus = false
                 }
@@ -187,7 +208,7 @@ class XMLUtilities {
 
             for character in v {
                 if character != ">" || !lastWasQuestionMark {
-                    result += character
+                    result.append(character)
                     lastWasQuestionMark = character == "?"
                 }
             }
@@ -208,27 +229,27 @@ class XMLUtilities {
                 case "'":
                     if let uQ = useQuot {
                         if uQ {
-                            result += character
+                            result.append(character)
                         }
                     } else {
-                        result += character
+                        result.append(character)
                         useQuot = true
                     }
                 case "\"":
                     if let uQ = useQuot {
                         if !uQ {
-                            result += character
+                            result.append(character)
                         }
                     } else {
-                        result += character
+                        result.append(character)
                         useQuot = false
                     }
                 default:
-                    result += character
+                    result.append(character)
                 }
             }
 
-            if !useQuot {
+            if useQuot == nil {
                 useQuot = true
             }
 

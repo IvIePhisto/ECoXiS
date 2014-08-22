@@ -102,7 +102,7 @@ public class XMLAttributes: SequenceType, Equatable {
     public func set(name: String, _ value: String?) -> XMLNameSettingResult {
         if let _name = XMLUtilities.enforceName(name) {
             if !_name.isEmpty {
-                _attributes[name] = value
+                _attributes[_name] = value
                 return _name == name ? .ValidName : .ModifiedName
             }
         }

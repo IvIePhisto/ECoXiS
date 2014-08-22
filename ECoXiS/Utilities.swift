@@ -65,12 +65,12 @@ class XMLUtilities {
     class func isCodePointInRanges(codePoint: UInt32,
             ranges: (UInt32, UInt32)...) -> Bool {
         for (lowerBound, upperBound) in ranges {
-            if lowerBound > codePoint || upperBound < codePoint {
-                return false
+            if lowerBound <= codePoint && codePoint <= upperBound {
+                return true
             }
         }
 
-        return true
+        return false
     }
 
     class func isNameStartCharacter(codePoint: UInt32) -> Bool {
@@ -127,7 +127,7 @@ class XMLUtilities {
             var codePoint = unicodeScalar.value
 
             if check(codePoint) {
-                result += unicodeScalar.description
+                result.append(unicodeScalar)
                 resultCharacterCount++
             }
         }
@@ -277,7 +277,7 @@ class XMLUtilities {
                         CharacterScalars.Semicolon,
                         CharacterScalars.At,
                         CharacterScalars.Underscore:
-                    result += unicodeScalar.description
+                    result.append(unicodeScalar)
                 default:
                     if (CharacterScalars.A <= us && CharacterScalars.Z >= us)
                         || (CharacterScalars.a <= us
@@ -288,7 +288,7 @@ class XMLUtilities {
                                 && CharacterScalars.Slash >= us)
                         || (CharacterScalars.Hashbang <= us
                                 && CharacterScalars.Percent >= us) {
-                        result += unicodeScalar.description
+                        result.append(unicodeScalar)
                     }
                 }
             }

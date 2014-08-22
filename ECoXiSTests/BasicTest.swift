@@ -7,7 +7,7 @@ import ECoXiS
 func template(title: String, message: String) -> XMLDocument {
     let titleTextNode = <&title
     return XML(
-        </"html" | ["lang": "en", "xmlns": "http://www.w3.org/1999/xhtml"] | [
+        </"html" | ["xmlns": "http://www.w3.org/1999/xhtml"] | [
             </"head" | [</"title" | titleTextNode],
             </"body" | [
                 </"h1" | titleTextNode,
@@ -149,7 +149,8 @@ class BasicTest: XCTestCase {
     }
 
     func testTemplate() {
-        let templateString = "<!DOCTYPE html><html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>&lt;Foo Bar&gt;</title></head><body><h1>&lt;Foo Bar&gt;</h1><p>Hello World!</p><!--This is a comment, multiple - are collapsed!--><?processing-instruction-target PI? content?></body></html>"
-        XCTAssert(template("<Foo Bar>", "Hello World!").toString() == templateString)
+        let templateString = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>&lt;Foo Bar&gt;</title></head><body><h1>&lt;Foo Bar&gt;</h1><p>Hello World!</p><!--This is a comment, multiple - are collapsed!--><?processing-instruction-target PI? content?></body></html>"
+        let resultString = template("<Foo Bar>", "Hello World!").toString()
+        XCTAssert(resultString == templateString)
     }
 }

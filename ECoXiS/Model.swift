@@ -16,14 +16,14 @@ public func == (left: XMLNode, right: XMLNode) -> Bool {
 
     switch left.nodeType {
     case .Element:
-        return left as XMLElement != right as XMLElement
+        return (left as! XMLElement) != right as! XMLElement
     case .Text:
-        return left as XMLText != right as XMLText
+        return (left as! XMLText) != right as! XMLText
     case .Comment:
-        return left as XMLComment != right as XMLComment
+        return (left as! XMLComment) != right as! XMLComment
     case .ProcessingInstruction:
-        return left as XMLProcessingInstruction
-                != right as XMLProcessingInstruction
+        return left as! XMLProcessingInstruction
+                != right as! XMLProcessingInstruction
     }
 }
 
@@ -53,7 +53,7 @@ public func == (left: XMLMiscNode, right: XMLMiscNode) -> Bool {
 }
 
 public func != (left: XMLMiscNode, right: XMLMiscNode) -> Bool {
-    return left as XMLNode != right as XMLNode
+    return (left as XMLNode) != right as XMLNode
 }
 
 public func == (left: [XMLMiscNode], right: [XMLMiscNode]) -> Bool {

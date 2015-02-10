@@ -143,7 +143,7 @@ class XMLUtilities {
         if let c = content {
             var isFirst = true
             var index = 0
-            var lastIndex = countElements(c) - 1
+            var lastIndex = count(c) - 1
             var result = ""
             var appendMinus = false
             var lastWasMinus = false
@@ -181,7 +181,7 @@ class XMLUtilities {
     class func enforceProcessingInstructionTarget(target: String?) -> String? {
         if let t = target {
             if let t = enforceName(t) {
-                if countElements(t) == 3 {
+                if count(t) == 3 {
                     check: for (index, character) in enumerate(t) {
                         switch (index, character) {
                         case (0, "x"), (0, "X"), (1, "m"), (1, "M"):

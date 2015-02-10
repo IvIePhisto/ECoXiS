@@ -83,8 +83,8 @@ class BasicTest: XCTestCase {
         var element = </"<test/>" | attributes
             | [<&text, PI("foo", "bar"), <!"--foo--bar--"]
         XCTAssert(element.name == "test")
-        XCTAssert(element[0]! as XMLText == text)
-        XCTAssert(text == element[0]! as XMLText)
+        XCTAssert(element[0]! as! XMLText == text)
+        XCTAssert(text == element[0]! as! XMLText)
         element.name = "1Foo/Bar?"
         XCTAssert(element.name == "FooBar")
         XCTAssert(element.attributes.count == 2)

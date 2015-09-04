@@ -41,7 +41,7 @@ public func el(name: String, _ attributes: [String: String] = [:],
             }
         }
 
-        let a = XMLAttributes.createString(GeneratorOf(preparedAttributes.generate()))
+        let a = XMLAttributes.createString(anyGenerator(preparedAttributes.generate()))
         return XMLElement.createString(n, attributesString: a,
             childrenString: children)
     }

@@ -5,7 +5,7 @@ public enum XMLNodeType {
 }
 
 
-public protocol XMLNode: Printable {
+public protocol XMLNode: CustomStringConvertible {
     var nodeType: XMLNodeType { get }
 }
 
@@ -16,14 +16,14 @@ public func == (left: XMLNode, right: XMLNode) -> Bool {
 
     switch left.nodeType {
     case .Element:
-        return left as XMLElement != right as XMLElement
+        return left as! XMLElement != right as! XMLElement
     case .Text:
-        return left as XMLText != right as XMLText
+        return left as! XMLText != right as! XMLText
     case .Comment:
-        return left as XMLComment != right as XMLComment
+        return left as! XMLComment != right as! XMLComment
     case .ProcessingInstruction:
-        return left as XMLProcessingInstruction
-                != right as XMLProcessingInstruction
+        return left as! XMLProcessingInstruction
+                != right as! XMLProcessingInstruction
     }
 }
 
@@ -36,7 +36,7 @@ public func == (left: [XMLNode], right: [XMLNode]) -> Bool {
         return false
     }
 
-    for (leftNode, rightNode) in Zip2(left, right) {
+    for (leftNode, rightNode) in Zip2Sequence(left, right) {
         if leftNode != rightNode {
             return false
         }
@@ -61,7 +61,7 @@ public func == (left: [XMLMiscNode], right: [XMLMiscNode]) -> Bool {
         return false
     }
 
-    for (leftNode, rightNode) in Zip2(left, right) {
+    for (leftNode, rightNode) in Zip2Sequence(left, right) {
         if leftNode != rightNode {
             return false
         }
@@ -120,8 +120,8 @@ public class XMLAttributes: SequenceType, Equatable {
         }
     }
 
-    public func generate() -> GeneratorOf<(String, String)> {
-        return GeneratorOf(_attributes.generate())
+    public func generate() -> AnyGenerator<(String, String)> {
+        return anyGenerator(_attributes.generate())
     }
 
     public subscript(name: String) -> String? {
@@ -134,12 +134,12 @@ public class XMLAttributes: SequenceType, Equatable {
         }
     }
 
-    class func createString(var attributeGenerator:
-            GeneratorOf<(String, String)>) -> String {
+    class func createString(attributeGenerator:
+            AnyGenerator<(String, String)>) -> String {
         var result = ""
 
         while let (name, value) = attributeGenerator.next() {
-            var escapedValue = XMLUtilities.escape(value, .EscapeQuot)
+            let escapedValue = XMLUtilities.escape(value, .EscapeQuot)
             result += " \(name)=\"\(escapedValue)\""
         }
 
@@ -342,16 +342,16 @@ public class XMLDocument: SequenceType, Equatable {
         self.doctype = doctype
     }
 
-    public func generate() -> GeneratorOf<XMLNode> {
+    public func generate() -> AnyGenerator<XMLNode> {
         var nodes = [XMLNode]()
         nodes += beforeElement
         nodes.append(element)
         nodes += afterElement
 
-        return GeneratorOf(nodes.generate())
+        return anyGenerator(nodes.generate())
     }
 
-    class func createString(#omitXMLDeclaration: Bool,
+    class func createString(omitXMLDeclaration omitXMLDeclaration: Bool,
             encoding: String? = nil,
             doctypeString: String?,
             childrenString: String) -> String {

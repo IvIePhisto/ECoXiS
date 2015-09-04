@@ -30,7 +30,7 @@ class BasicTest: XCTestCase {
         let piString = "<?foo bar??>"
         let emptyPIString = "<?foo?>"
         // Model:
-        var processingInstruction = PI(target, value)
+        let processingInstruction = PI(target, value)
         XCTAssert(processingInstruction.target == "foo")
         XCTAssert(processingInstruction.value == "bar?")
         XCTAssert(processingInstruction.description == piString)
@@ -50,7 +50,7 @@ class BasicTest: XCTestCase {
         let invalidContent = "----"
         let commentString = "<!--Foo-Bar-->"
         // Model:
-        var comment = <!content
+        let comment = <!content
         XCTAssert(comment.content == "Foo-Bar")
         XCTAssert(comment.description == commentString)
         comment.content = invalidContent
@@ -76,15 +76,14 @@ class BasicTest: XCTestCase {
     func testElement() {
         let text = "<Hello World!/>"
         let fooValue = "<foz'\">"
-        let escapedFooValue = "&lt;foz'&quot;&gt;"
         let elementString = "<FooBar foo=\"&lt;foz'&quot;&gt;\">&lt;Hello World!/&gt;<?foo bar?><!--foo-bar--></FooBar>"
         let attributes = ["!foo": fooValue, "<bar/>": "boz"]
         // Model:
-        var element = </"<test/>" | attributes
+        let element = </"<test/>" | attributes
             | [<&text, PI("foo", "bar"), <!"--foo--bar--"]
         XCTAssert(element.name == "test")
-        XCTAssert(element[0]! as XMLText == text)
-        XCTAssert(text == element[0]! as XMLText)
+        XCTAssert(element[0]! as! XMLText == text)
+        XCTAssert(text == element[0]! as! XMLText)
         element.name = "1Foo/Bar?"
         XCTAssert(element.name == "FooBar")
         XCTAssert(element.attributes.count == 2)
@@ -108,7 +107,7 @@ class BasicTest: XCTestCase {
     }
 
     func testDoctype() {
-        var doctype = Doctype(publicID: "<Foo Bar>", systemID: "\"foo'\"bar")
+        let doctype = Doctype(publicID: "<Foo Bar>", systemID: "\"foo'\"bar")
         XCTAssert(doctype.publicID == "Foo Bar")
         XCTAssert(!doctype.useQuotForSystemID)
         XCTAssert(doctype.systemID == "\"foo\"bar")
@@ -130,7 +129,7 @@ class BasicTest: XCTestCase {
     func testDocument() {
         let documentString = "<?xml version=\"1.0\"?><!DOCTYPE FooBar><!--before--><FooBar/><?after?>"
         // Model:
-        var document = XML(</"FooBar", beforeElement: [<!"before"],
+        let document = XML(</"FooBar", beforeElement: [<!"before"],
             afterElement: [PI("after")], doctype: Doctype())
         XCTAssert(document.toString() == documentString)
         document.element.name = nil
@@ -150,7 +149,7 @@ class BasicTest: XCTestCase {
 
     func testTemplate() {
         let templateString = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>&lt;Foo Bar&gt;</title></head><body><h1>&lt;Foo Bar&gt;</h1><p>Hello World!</p><!--This is a comment, multiple - are collapsed!--><?processing-instruction-target PI? content?></body></html>"
-        let resultString = template("<Foo Bar>", "Hello World!").toString()
+        let resultString = template("<Foo Bar>", message: "Hello World!").toString()
         XCTAssert(resultString == templateString)
     }
 }

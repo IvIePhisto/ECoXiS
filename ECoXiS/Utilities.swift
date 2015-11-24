@@ -32,7 +32,7 @@ class XMLUtilities {
             AttributeValueEscape = .NoAttribute) -> String {
         var result = ""
 
-        for character in value {
+        for character in value.characters {
             switch (character, attributeValueEscape) {
             case ("<", _):
                 result += "&lt;"
@@ -124,7 +124,7 @@ class XMLUtilities {
         }
 
         for unicodeScalar in name.unicodeScalars {
-            var codePoint = unicodeScalar.value
+            let codePoint = unicodeScalar.value
 
             if check(codePoint) {
                 result.append(unicodeScalar)
@@ -143,12 +143,11 @@ class XMLUtilities {
         if let c = content {
             var isFirst = true
             var index = 0
-            var lastIndex = count(c) - 1
+            let lastIndex = c.characters.count - 1
             var result = ""
             var appendMinus = false
-            var lastWasMinus = false
 
-            for character in c {
+            for character in c.characters {
                 let isMinus = character == "-"
                 let isLast = index == lastIndex
 
@@ -162,7 +161,6 @@ class XMLUtilities {
                     }
                     result.append(character)
                     isFirst = false
-                    lastWasMinus = false
                 }
 
                 index++
@@ -181,8 +179,8 @@ class XMLUtilities {
     class func enforceProcessingInstructionTarget(target: String?) -> String? {
         if let t = target {
             if let t = enforceName(t) {
-                if count(t) == 3 {
-                    check: for (index, character) in enumerate(t) {
+                if t.characters.count == 3 {
+                    check: for (index, character) in t.characters.enumerate() {
                         switch (index, character) {
                         case (0, "x"), (0, "X"), (1, "m"), (1, "M"):
                             break
@@ -206,7 +204,7 @@ class XMLUtilities {
             var result = ""
             var lastWasQuestionMark = false
 
-            for character in v {
+            for character in v.characters {
                 if character != ">" || !lastWasQuestionMark {
                     result.append(character)
                     lastWasQuestionMark = character == "?"
@@ -224,7 +222,7 @@ class XMLUtilities {
             var useQuot: Bool?
             var result = ""
 
-            for character in sysID {
+            for character in sysID.characters {
                 switch character {
                 case "'":
                     if let uQ = useQuot {
@@ -264,7 +262,7 @@ class XMLUtilities {
             var result = ""
 
             for unicodeScalar in pID.unicodeScalars {
-                var us = unicodeScalar.value
+                let us = unicodeScalar.value
 
                 switch us {
                 case CharacterScalars.Space,
